@@ -1,0 +1,18 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import LandingContent from '../components/LandingContent.astro';
+import DashboardContent from '../components/DashboardContent.astro';
+import Modals from '../components/Modals.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout title="LulusKerja.id — Siap Kerja dengan AI">
+  <Header />
+  <LandingContent />
+  <DashboardContent />
+  <Modals />
+  <Footer />
+
+  <script is:inline src="/mainLogic.js?v=5"></script>
+</Layout>

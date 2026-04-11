@@ -1,0 +1,61 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{title}</title>
+    <link rel="icon" type="image/png" href="https://iili.io/BHfsNaa.png">
+    
+    <script is:inline src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+    <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.21/mammoth.browser.min.js"></script>
+    <script is:inline src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script is:inline src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <script is:inline>
+    tailwind.config = {
+        theme: {
+            extend: {
+                fontFamily: {
+                    sans: ['Outfit', 'sans-serif'],
+                    mono: ['Fira Code', 'monospace']
+                }
+            }
+        }
+    }
+    </script>
+    
+    <script is:inline>
+    // Set PDF.js worker
+    // Using is:inline to let it run immediately
+    document.addEventListener("DOMContentLoaded", function() {
+        if(typeof pdfjsLib !== 'undefined') {
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+        }
+        if(typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    });
+    </script>
+</head>
+<body class="h-full bg-slate-950 text-white font-sans">
+    <div id="app-wrapper" class="w-full relative">
+        <slot />
+    </div>
+</body>
+</html>

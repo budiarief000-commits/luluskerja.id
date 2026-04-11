@@ -1,0 +1,193 @@
+---
+---
+
+<div id="dashboard-view" class="hidden min-h-screen pt-20 pb-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 sm:gap-8">
+          
+          <div class="glass p-5 sm:p-6 rounded-2xl h-fit space-y-4 sm:space-y-6">
+              <div class="text-center">
+                  <div class="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-xl sm:text-2xl font-bold mb-3 shadow-lg" id="dash-avatar">U</div>
+                  <h3 class="font-bold text-base sm:text-lg truncate" id="dash-name-display">User Name</h3>
+                  <p class="text-xs text-slate-400 truncate" id="dash-email-display">user@email.com</p>
+              </div>
+              <hr class="border-white/10">
+              
+              <nav class="flex flex-row overflow-x-auto lg:flex-col gap-2 pb-2 lg:pb-0 scroll-smooth chat-scroll snap-x">
+                  <button onclick="switchTab('tab-progress')" id="btn-tab-progress" class="shrink-0 w-auto lg:w-full flex items-center gap-2 sm:gap-3 px-4 py-2.5 sm:py-3 rounded-xl bg-emerald-500/20 text-emerald-300 font-medium transition text-xs sm:text-sm snap-start"><i data-lucide="bar-chart-2" class="w-4 h-4 sm:w-5 sm:h-5"></i> Progress</button>
+                  <button onclick="switchTab('tab-ai')" id="btn-tab-ai" class="shrink-0 w-auto lg:w-full flex items-center gap-2 sm:gap-3 px-4 py-2.5 sm:py-3 rounded-xl hover:bg-white/5 text-slate-300 font-medium transition text-xs sm:text-sm snap-start"><i data-lucide="file-check" class="w-4 h-4 sm:w-5 sm:h-5"></i> Cek CV</button>
+                  <button onclick="switchTab('tab-interview')" id="btn-tab-interview" class="shrink-0 w-auto lg:w-full flex items-center gap-2 sm:gap-3 px-4 py-2.5 sm:py-3 rounded-xl hover:bg-white/5 text-slate-300 font-medium transition text-xs sm:text-sm snap-start"><i data-lucide="mic" class="w-4 h-4 sm:w-5 sm:h-5"></i> Interview</button>
+                  <button onclick="switchTab('tab-profile')" id="btn-tab-profile" class="shrink-0 w-auto lg:w-full flex items-center gap-2 sm:gap-3 px-4 py-2.5 sm:py-3 rounded-xl hover:bg-white/5 text-slate-300 font-medium transition text-xs sm:text-sm snap-start"><i data-lucide="settings" class="w-4 h-4 sm:w-5 sm:h-5"></i> Profil</button>
+              </nav>
+          </div>
+
+          <div class="lg:col-span-3 space-y-6">
+              
+              <div id="tab-progress" class="glass p-5 sm:p-8 rounded-2xl">
+                  <h2 class="text-xl sm:text-2xl font-bold mb-2">Personal Dashboard</h2>
+                  <p class="text-sm text-slate-400 mb-6 sm:mb-8">Pantau progress latihan dari waktu ke waktu.</p>
+                  
+                  <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8">
+                      <div class="bg-slate-900/50 rounded-xl p-4 sm:p-5 border border-white/5">
+                          <p class="text-slate-400 text-xs sm:text-sm mb-1">Rata-rata CV</p>
+                          <div class="text-2xl sm:text-3xl font-bold text-indigo-400"><span id="stat-avg-cv">0</span><span class="text-xs sm:text-sm font-normal text-slate-500">/100</span></div>
+                      </div>
+                      <div class="bg-slate-900/50 rounded-xl p-4 sm:p-5 border border-white/5">
+                          <p class="text-slate-400 text-xs sm:text-sm mb-1">Interview</p>
+                          <div class="text-2xl sm:text-3xl font-bold text-purple-400"><span id="stat-avg-int">0</span><span class="text-xs sm:text-sm font-normal text-slate-500">/100</span></div>
+                      </div>
+                      <div class="col-span-2 sm:col-span-1 bg-slate-900/50 rounded-xl p-4 sm:p-5 border border-white/5">
+                          <p class="text-slate-400 text-xs sm:text-sm mb-1">Total Latihan</p>
+                          <div class="text-2xl sm:text-3xl font-bold text-emerald-400"><span id="stat-total">0</span><span class="text-xs sm:text-sm font-normal text-slate-500"> sesi</span></div>
+                      </div>
+                  </div>
+
+                  <div class="bg-slate-900/50 rounded-xl p-4 sm:p-6 border border-white/5 mb-6 sm:mb-8 overflow-hidden">
+                      <h3 class="font-bold mb-4 text-xs sm:text-sm text-slate-200">Grafik Peningkatan Skor</h3>
+                      <div class="relative h-48 sm:h-64 w-full">
+                          <canvas id="progressChart"></canvas>
+                      </div>
+                  </div>
+
+                  <div class="flex items-center justify-between mb-4">
+                      <h3 class="font-bold text-xs sm:text-sm text-slate-200">Riwayat Latihan Terbaru</h3>
+                      <button onclick="clearHistory()" class="text-[10px] sm:text-xs text-rose-400 hover:text-rose-300 hover:underline">Hapus Riwayat</button>
+                  </div>
+                  
+                  <div id="history-list" class="space-y-3 hidden"></div>
+                  
+                  <div id="history-empty" class="space-y-3">
+                      <div class="bg-slate-900/50 rounded-xl p-6 sm:p-8 border border-white/5 text-center border-dashed">
+                          <i data-lucide="inbox" class="w-10 h-10 text-slate-600 mx-auto mb-3"></i>
+                          <h4 class="font-semibold text-sm text-slate-300">Belum ada riwayat</h4>
+                          <p class="text-xs sm:text-sm text-slate-500 mt-1 max-w-sm mx-auto">Lakukan simulasi interview atau cek CV pertamamu untuk melihat riwayat dan skormu di sini.</p>
+                      </div>
+                  </div>
+              </div>
+
+              <div id="tab-ai" class="hidden glass p-5 sm:p-8 rounded-2xl">
+                  <h2 class="text-xl sm:text-2xl font-bold mb-2">AI CV Analyzer</h2>
+                  <p class="text-sm text-slate-400 mb-6 sm:mb-8">Upload CV kamu (PDF/TXT/DOCX) untuk mendapatkan skor ATS.</p>
+                  
+                  <div id="dropzone" class="border-2 border-dashed border-white/20 rounded-2xl p-6 sm:p-10 text-center hover:border-indigo-500/50 transition cursor-pointer relative bg-slate-900/50 overflow-hidden">
+                      <input type="file" id="cv-upload" accept="*/*" class="absolute inset-0 w-full h-full cursor-pointer z-50" style="opacity: 0 !important; cursor: pointer;" onchange="handleFileInput(event)">
+                      <i data-lucide="upload-cloud" class="w-10 h-10 sm:w-12 sm:h-12 text-indigo-400 mx-auto mb-3 pointer-events-none"></i>
+                      <p class="font-medium text-sm sm:text-lg mb-1 pointer-events-none" id="file-name-display">Pilih atau Tarik File CV</p>
+                      <p class="text-xs sm:text-sm text-slate-500 pointer-events-none">Maksimal 5MB</p>
+                  </div>
+
+                  <button id="btn-analyze" onclick="startAIAnalysis()" class="w-full py-3 sm:py-4 mt-6 rounded-xl bg-slate-800 text-slate-400 font-bold cursor-not-allowed transition flex items-center justify-center gap-2 text-sm sm:text-base" disabled>
+                      <i data-lucide="sparkles" class="w-4 h-4 sm:w-5 sm:h-5"></i> Mulai Analisis AI
+                  </button>
+
+                  <div id="ai-loading" class="hidden mt-8 text-center py-6 sm:py-10">
+                      <div class="w-8 h-8 sm:w-10 sm:h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                      <p class="text-xs sm:text-sm text-indigo-400 font-medium animate-pulse">Menganalisis CV kamu...</p>
+                  </div>
+
+                  <div id="ai-result-box" class="hidden mt-8 pt-6 sm:pt-8 border-t border-white/10">
+                      <div class="flex items-center gap-3 mb-4 sm:mb-6">
+                          <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center shrink-0 text-emerald-400"><i data-lucide="check-circle" class="w-5 h-5 sm:w-6 sm:h-6"></i></div>
+                          <div>
+                              <h3 class="text-lg sm:text-xl font-bold">Hasil Analisis</h3>
+                              <p class="text-xs sm:text-sm text-slate-400">Rekomendasi sistem ATS</p>
+                          </div>
+                      </div>
+                      <div class="bg-slate-950/80 rounded-xl p-4 sm:p-6 border border-white/5 markdown-body prose text-sm w-full overflow-hidden" id="ai-output-content"></div>
+                  </div>
+              </div>
+
+              <div id="tab-interview" class="hidden glass p-5 sm:p-8 rounded-2xl">
+                  <h2 class="text-xl sm:text-2xl font-bold mb-2">Simulasi Interview AI</h2>
+                  <p class="text-sm text-slate-400 mb-6 sm:mb-8">Latihan wawancara interaktif dengan feedback.</p>
+
+                  <div id="interview-setup" class="space-y-4 sm:space-y-5 max-w-md">
+                      <div>
+                          <label class="block text-xs sm:text-sm font-medium text-slate-300 mb-1.5">Posisi / Role</label>
+                          <input type="text" id="int-role" placeholder="Contoh: Admin" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-base sm:text-sm focus:outline-none focus:border-purple-500 transition">
+                      </div>
+                      <div>
+                          <label class="block text-xs sm:text-sm font-medium text-slate-300 mb-1.5">Industri</label>
+                          <input type="text" id="int-industry" placeholder="Contoh: Startup" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-base sm:text-sm focus:outline-none focus:border-purple-500 transition">
+                      </div>
+                      <button onclick="startInterview()" class="w-full bg-purple-600 hover:bg-purple-500 text-white py-3 rounded-xl text-sm font-bold transition flex items-center justify-center gap-2">
+                          <i data-lucide="play" class="w-4 h-4"></i> Mulai Interview
+                      </button>
+                  </div>
+
+                  <div id="interview-chat-container" class="hidden flex-col h-[65vh] sm:h-[500px]">
+                      <div class="flex items-center justify-between mb-3 pb-3 border-b border-white/10 shrink-0">
+                          <div class="flex items-center gap-2 sm:gap-3">
+                              <div class="relative">
+                                  <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-slate-800 flex items-center justify-center border border-white/10"><i data-lucide="bot" class="w-4 h-4 sm:w-5 sm:h-5 text-indigo-400"></i></div>
+                                  <div class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-slate-900 rounded-full"></div>
+                              </div>
+                              <div>
+                                  <h3 class="font-bold text-xs sm:text-sm leading-tight">AI Recruiter</h3>
+                                  <p class="text-[10px] sm:text-xs text-slate-400" id="chat-role-indicator">HR Profesional</p>
+                              </div>
+                          </div>
+                          <button onclick="resetInterview()" class="text-[10px] sm:text-xs text-rose-400 hover:text-rose-300 px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg hover:bg-rose-500/10 transition">Akhiri</button>
+                      </div>
+
+                      <div id="interview-chat-box" class="chat-scroll flex-1 overflow-y-auto space-y-4 p-3 sm:p-4 rounded-xl bg-slate-900/40 border border-white/5 mb-3">
+                      </div>
+
+                      <div class="flex gap-2 sm:gap-3 relative shrink-0">
+                          <textarea id="int-user-answer" rows="1" placeholder="Ketik jawabanmu..." class="flex-1 px-3 py-2 sm:px-4 sm:py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-purple-500 resize-none text-base sm:text-sm overflow-hidden" style="min-height: 44px;"></textarea>
+                          <button onclick="sendInterviewAnswer()" id="btn-send-answer" class="bg-purple-600 hover:bg-purple-500 text-white px-4 sm:px-5 rounded-xl transition flex items-center justify-center shrink-0">
+                              <i data-lucide="send" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+                          </button>
+                      </div>
+                  </div>
+              </div>
+
+              <div id="tab-profile" class="hidden glass p-5 sm:p-8 rounded-2xl">
+                  <h2 class="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Pengaturan Akun</h2>
+                  <form id="profile-form-data" class="space-y-6 max-w-md">
+                      
+                      <div class="space-y-4 sm:space-y-5">
+                          <h3 class="text-lg font-semibold text-indigo-300 border-b border-white/10 pb-2">Informasi Profil</h3>
+                          <div>
+                              <label class="block text-xs sm:text-sm font-medium text-slate-300 mb-1.5">Nama Lengkap</label>
+                              <input type="text" id="prof-name" required class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-base sm:text-sm focus:outline-none focus:border-indigo-500 transition">
+                          </div>
+                          <div>
+                              <label class="block text-xs sm:text-sm font-medium text-slate-300 mb-1.5">Alamat Email</label>
+                              <input type="email" id="prof-email" required class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-base sm:text-sm focus:outline-none focus:border-indigo-500 transition">
+                          </div>
+                      </div>
+
+                      <div class="space-y-4 sm:space-y-5 pt-2">
+                          <h3 class="text-lg font-semibold text-indigo-300 border-b border-white/10 pb-2">Ubah Password <span class="text-xs text-slate-500 font-normal">(Kosongkan jika tidak ingin mengubah)</span></h3>
+                          <div>
+                              <label class="block text-xs sm:text-sm font-medium text-slate-300 mb-1.5">Password Lama</label>
+                              <div class="relative">
+                                  <input type="password" id="prof-old-pass" placeholder="••••••••" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-base sm:text-sm focus:outline-none focus:border-indigo-500 pr-12 transition">
+                                  <button type="button" onclick="togglePassword('prof-old-pass', this)" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-white transition">
+                                      <span class="icon-show"><i data-lucide="eye" class="w-5 h-5"></i></span>
+                                      <span class="icon-hide hidden"><i data-lucide="eye-off" class="w-5 h-5"></i></span>
+                                  </button>
+                              </div>
+                          </div>
+                          <div>
+                              <label class="block text-xs sm:text-sm font-medium text-slate-300 mb-1.5">Password Baru</label>
+                              <div class="relative">
+                                  <input type="password" id="prof-new-pass" placeholder="Minimal 6 karakter" minlength="6" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-base sm:text-sm focus:outline-none focus:border-indigo-500 pr-12 transition">
+                                  <button type="button" onclick="togglePassword('prof-new-pass', this)" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-white transition">
+                                      <span class="icon-show"><i data-lucide="eye" class="w-5 h-5"></i></span>
+                                      <span class="icon-hide hidden"><i data-lucide="eye-off" class="w-5 h-5"></i></span>
+                                  </button>
+                              </div>
+                          </div>
+                      </div>
+
+                      <button type="button" onclick="saveProfileProcess(event)" class="cta-btn py-3 px-6 w-full sm:w-auto rounded-xl text-sm font-bold mt-4 transition hover:scale-105 active:scale-95">Simpan Perubahan</button>
+                      <p id="prof-save-msg" class="text-emerald-400 text-xs sm:text-sm hidden mt-2 text-center sm:text-left animate-fade-up">Perubahan berhasil disimpan!</p>
+                  </form>
+              </div>
+
+          </div>
+      </div>
+  </div>
+
+  </div>

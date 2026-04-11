@@ -1,0 +1,48 @@
+---
+---
+
+<nav class="nav-blur fixed top-0 left-0 right-0 z-50 border-b border-white/5">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16 gap-2">
+     
+     <div class="flex items-center gap-2 cursor-pointer shrink-0" onclick="showLandingPage()">
+      <img src="https://iili.io/BHfsNaa.png" alt="LulusKerja.id Logo" class="w-8 h-8 sm:w-10 sm:h-10 object-contain shrink-0" loading="lazy">
+      <span class="font-bold text-base sm:text-lg tracking-tight whitespace-nowrap">LulusKerja<span class="text-indigo-400">.id</span></span>
+     </div>
+     
+     <div id="nav-links-center" class="hidden lg:flex items-center gap-8 text-sm text-slate-300">
+         <a href="#features" class="hover:text-white transition whitespace-nowrap">Fitur</a> 
+         <a href="#pricing" class="hover:text-white transition whitespace-nowrap">Harga</a> 
+         <a href="#testimonials" class="hover:text-white transition whitespace-nowrap">Testimoni</a> 
+         <a href="#faq" class="hover:text-white transition whitespace-nowrap">FAQ</a>
+     </div>
+     
+     <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+         <div id="nav-controls-guest" class="flex items-center gap-2 sm:gap-3">
+             <button onclick="toggleAuthModal(true, 'login')" class="hidden sm:block text-sm text-slate-300 hover:text-white transition whitespace-nowrap">Masuk</button> 
+             <button class="cta-btn rounded-full px-4 py-1.5 sm:px-5 sm:py-2 text-xs sm:text-sm font-semibold whitespace-nowrap" onclick="toggleAuthModal(true, 'register')"> 
+                 <span id="nav-cta">Coba Gratis</span> 
+             </button>
+         </div>
+         
+         <div id="nav-controls-user" class="hidden items-center gap-2 sm:gap-4">
+             <button onclick="showDashboard()" class="text-xs sm:text-sm font-medium text-indigo-400 hover:text-indigo-300 transition whitespace-nowrap">Dashboard</button>
+             <button onclick="logout()" class="hidden sm:block text-xs sm:text-sm text-slate-400 hover:text-rose-400 transition whitespace-nowrap">Keluar</button>
+         </div>
+         
+         <button id="mobile-menu-btn" class="lg:hidden text-slate-300 p-1 shrink-0" aria-label="Menu"> 
+            <i data-lucide="menu" class="w-6 h-6"></i> 
+         </button>
+     </div>
+
+    </div>
+    
+    <div id="mobile-menu" class="hidden lg:hidden border-t border-white/5 px-4 pb-4 bg-slate-950/95 backdrop-blur-xl">
+     <div class="flex flex-col gap-3 pt-3 text-sm text-slate-300">
+         <a href="#features" class="hover:text-white py-2 border-b border-white/5">Fitur</a> 
+         <a href="#pricing" class="hover:text-white py-2 border-b border-white/5">Harga</a> 
+         <a href="#testimonials" class="hover:text-white py-2 border-b border-white/5">Testimoni</a> 
+         <a href="#faq" class="hover:text-white py-2 border-b border-white/5">FAQ</a>
+         <a href="#" onclick="logout()" id="mobile-menu-logout" class="hidden hover:text-rose-400 py-2 text-rose-500">Keluar Akun</a>
+     </div>
+    </div>
+   </nav>
