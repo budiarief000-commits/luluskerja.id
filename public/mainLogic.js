@@ -835,6 +835,37 @@
         }
     }
 
+    function renderChat() {
+        const chatBox = document.getElementById('interview-chat-box');
+        if (!chatBox) return;
+        
+        let chatHtml = `<div class="space-y-4 pb-4">`;
+        interviewMessages.forEach(msg => {
+            if(msg.role === 'system') return;
+            const isUser = msg.role === 'user';
+            const align = isUser ? 'justify-end' : 'justify-start';
+            const bg = isUser ? 'bg-purple-600/20 border-purple-500/30 text-white' : 'bg-slate-800/80 border-white/10 text-slate-200';
+            const icon = isUser ? '<i data-lucide="user" class="w-4 h-4 text-purple-400"></i>' : '<i data-lucide="bot" class="w-4 h-4 text-indigo-400"></i>';
+
+            chatHtml += `
+                <div class="flex ${align} animate-fade-up">
+                    <div class="max-w-[90%] sm:max-w-[85%] flex gap-2 sm:gap-3 ${isUser ? 'flex-row-reverse' : 'flex-row'}">
+                        <div class="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center shrink-0 border border-white/10">
+                            ${icon}
+                        </div>
+                        <div class="p-3 sm:p-4 rounded-xl border ${bg} markdown-body text-xs sm:text-sm shadow-lg overflow-hidden">
+                            ${marked.parse(msg.content)}
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        chatHtml += `</div>`;
+        chatBox.innerHTML = chatHtml;
+        lucide.createIcons();
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
     async function sendInterviewAnswer() {
         const inputEl = document.getElementById('int-user-answer');
         const answer = inputEl.value.trim();
