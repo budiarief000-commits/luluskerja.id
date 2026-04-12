@@ -1,249 +1,668 @@
 ---
+
 ---
 
-<div id="bundle-modal" class="fixed inset-0 z-[110] hidden items-center justify-center bg-slate-950/80 backdrop-blur-sm transition-opacity p-4">
-       <div class="glass w-full max-w-3xl p-6 sm:p-8 rounded-2xl relative shadow-2xl animate-fade-up flex flex-col max-h-[90vh]">
-           <button onclick="toggleBundleModal(false)" class="absolute top-4 right-4 text-slate-400 hover:text-white p-2 bg-white/5 hover:bg-white/10 rounded-full transition"><i data-lucide="x" class="w-5 h-5"></i></button>
-           <h3 class="text-xl sm:text-2xl font-bold mb-1">Pilih Paket Bundle</h3>
-           <p class="text-sm text-slate-400 mb-6">Pilih paket yang paling sesuai dengan kebutuhan persiapan kariermu.</p>
+<div
+    id="bundle-modal"
+    class="fixed inset-0 z-[110] hidden items-center justify-center bg-slate-950/80 backdrop-blur-sm transition-opacity p-4"
+>
+    <div
+        class="glass w-full max-w-3xl p-6 sm:p-8 rounded-2xl relative shadow-2xl animate-fade-up flex flex-col max-h-[90vh]"
+    >
+        <button
+            onclick="toggleBundleModal(false)"
+            class="absolute top-4 right-4 text-slate-400 hover:text-white p-2 bg-white/5 hover:bg-white/10 rounded-full transition"
+            ><i data-lucide="x" class="w-5 h-5"></i></button
+        >
+        <h3 class="text-xl sm:text-2xl font-bold mb-1">Pilih Paket Bundle</h3>
+        <p class="text-sm text-slate-400 mb-6">
+            Pilih paket yang paling sesuai dengan kebutuhan persiapan kariermu.
+        </p>
 
-           <div class="grid sm:grid-cols-3 gap-4 mb-6 overflow-y-auto p-1 chat-scroll">
-               
-               <label class="bundle-radio relative flex flex-col p-5 rounded-xl border border-white/10 cursor-pointer bg-white/5 transition h-full">
-                   <input type="radio" name="bundle_choice" value="Starter|Rp 99.000" class="sr-only">
-                   <div class="bundle-ring absolute inset-0 rounded-xl border-2 border-transparent transition-colors pointer-events-none"></div>
-                   <div class="flex-1 z-10 relative">
-                       <h4 class="font-bold text-white mb-1">Starter</h4>
-                       <div class="text-xl font-bold text-indigo-400 mb-4">Rp 99k</div>
-                       <ul class="space-y-2 text-xs text-slate-300">
-                           <li class="flex gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i> 5x CV Check</li>
-                           <li class="flex gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i> 5x Simulasi Interview</li>
-                           <li class="flex gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i> Masa aktif 3 bulan</li>
-                       </ul>
-                   </div>
-                   <div class="mt-4 flex justify-end z-10 relative">
-                       <div class="w-5 h-5 rounded-full border border-slate-500 flex items-center justify-center check-circle transition-colors"><div class="w-2.5 h-2.5 rounded-full bg-indigo-500 scale-0 transition-transform check-dot"></div></div>
-                   </div>
-               </label>
+        <div
+            class="grid sm:grid-cols-3 gap-4 mb-6 overflow-y-auto p-1 chat-scroll"
+        >
+            <label
+                class="bundle-radio relative flex flex-col p-5 rounded-xl border border-white/10 cursor-pointer bg-white/5 transition h-full"
+            >
+                <input
+                    type="radio"
+                    name="bundle_choice"
+                    value="Starter|Rp 99.000"
+                    class="sr-only"
+                />
+                <div
+                    class="bundle-ring absolute inset-0 rounded-xl border-2 border-transparent transition-colors pointer-events-none"
+                >
+                </div>
+                <div class="flex-1 z-10 relative">
+                    <h4 class="font-bold text-white mb-1">Starter</h4>
+                    <div class="text-xl font-bold text-indigo-400 mb-4">
+                        Rp 99k
+                    </div>
+                    <ul class="space-y-2 text-xs text-slate-300">
+                        <li class="flex gap-2">
+                            <i
+                                data-lucide="check"
+                                class="w-3.5 h-3.5 text-emerald-400 shrink-0"
+                            ></i> 5x CV Check
+                        </li>
+                        <li class="flex gap-2">
+                            <i
+                                data-lucide="check"
+                                class="w-3.5 h-3.5 text-emerald-400 shrink-0"
+                            ></i> 5x Simulasi Interview
+                        </li>
+                        <li class="flex gap-2">
+                            <i
+                                data-lucide="check"
+                                class="w-3.5 h-3.5 text-emerald-400 shrink-0"
+                            ></i> Masa aktif 3 bulan
+                        </li>
+                    </ul>
+                </div>
+                <div class="mt-4 flex justify-end z-10 relative">
+                    <div
+                        class="w-5 h-5 rounded-full border border-slate-500 flex items-center justify-center check-circle transition-colors"
+                    >
+                        <div
+                            class="w-2.5 h-2.5 rounded-full bg-indigo-500 scale-0 transition-transform check-dot"
+                        >
+                        </div>
+                    </div>
+                </div>
+            </label>
 
-               <label class="bundle-radio relative flex flex-col p-5 rounded-xl border border-white/10 cursor-pointer bg-white/5 transition h-full">
-                   <input type="radio" name="bundle_choice" value="Pro|Rp 199.000" class="sr-only" checked>
-                   <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-indigo-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap z-20">Paling Diminati</div>
-                   <div class="bundle-ring absolute inset-0 rounded-xl border-2 border-transparent transition-colors pointer-events-none"></div>
-                   <div class="flex-1 mt-2 z-10 relative">
-                       <h4 class="font-bold text-white mb-1">Pro</h4>
-                       <div class="text-xl font-bold text-indigo-400 mb-4">Rp 199k</div>
-                       <ul class="space-y-2 text-xs text-slate-300">
-                           <li class="flex gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i> 10x CV Check</li>
-                           <li class="flex gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i> 10x Simulasi Interview</li>
-                           <li class="flex gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i> Masa aktif 6 bulan</li>
-                           <li class="flex gap-2"><i data-lucide="gift" class="w-3.5 h-3.5 text-pink-400 shrink-0"></i> Bonus Template CV</li>
-                       </ul>
-                   </div>
-                   <div class="mt-4 flex justify-end z-10 relative">
-                       <div class="w-5 h-5 rounded-full border border-slate-500 flex items-center justify-center check-circle transition-colors"><div class="w-2.5 h-2.5 rounded-full bg-indigo-500 scale-0 transition-transform check-dot"></div></div>
-                   </div>
-               </label>
+            <label
+                class="bundle-radio relative flex flex-col p-5 rounded-xl border border-white/10 cursor-pointer bg-white/5 transition h-full"
+            >
+                <input
+                    type="radio"
+                    name="bundle_choice"
+                    value="Pro|Rp 199.000"
+                    class="sr-only"
+                    checked
+                />
+                <div
+                    class="absolute -top-3 left-1/2 -translate-x-1/2 bg-indigo-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap z-20"
+                >
+                    Paling Diminati
+                </div>
+                <div
+                    class="bundle-ring absolute inset-0 rounded-xl border-2 border-transparent transition-colors pointer-events-none"
+                >
+                </div>
+                <div class="flex-1 mt-2 z-10 relative">
+                    <h4 class="font-bold text-white mb-1">Pro</h4>
+                    <div class="text-xl font-bold text-indigo-400 mb-4">
+                        Rp 199k
+                    </div>
+                    <ul class="space-y-2 text-xs text-slate-300">
+                        <li class="flex gap-2">
+                            <i
+                                data-lucide="check"
+                                class="w-3.5 h-3.5 text-emerald-400 shrink-0"
+                            ></i> 10x CV Check
+                        </li>
+                        <li class="flex gap-2">
+                            <i
+                                data-lucide="check"
+                                class="w-3.5 h-3.5 text-emerald-400 shrink-0"
+                            ></i> 10x Simulasi Interview
+                        </li>
+                        <li class="flex gap-2">
+                            <i
+                                data-lucide="check"
+                                class="w-3.5 h-3.5 text-emerald-400 shrink-0"
+                            ></i> Masa aktif 6 bulan
+                        </li>
+                        <li class="flex gap-2">
+                            <i
+                                data-lucide="gift"
+                                class="w-3.5 h-3.5 text-pink-400 shrink-0"></i> Bonus
+                            Template CV
+                        </li>
+                    </ul>
+                </div>
+                <div class="mt-4 flex justify-end z-10 relative">
+                    <div
+                        class="w-5 h-5 rounded-full border border-slate-500 flex items-center justify-center check-circle transition-colors"
+                    >
+                        <div
+                            class="w-2.5 h-2.5 rounded-full bg-indigo-500 scale-0 transition-transform check-dot"
+                        >
+                        </div>
+                    </div>
+                </div>
+            </label>
 
-               <label class="bundle-radio relative flex flex-col p-5 rounded-xl border border-white/10 cursor-pointer bg-white/5 transition h-full">
-                   <input type="radio" name="bundle_choice" value="Ultimate|Rp 299.000" class="sr-only">
-                   <div class="bundle-ring absolute inset-0 rounded-xl border-2 border-transparent transition-colors pointer-events-none"></div>
-                   <div class="flex-1 z-10 relative">
-                       <h4 class="font-bold text-white mb-1">Ultimate</h4>
-                       <div class="text-xl font-bold text-indigo-400 mb-4">Rp 299k</div>
-                       <ul class="space-y-2 text-xs text-slate-300">
-                           <li class="flex gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i> 20x CV Check</li>
-                           <li class="flex gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i> 20x Simulasi Interview</li>
-                           <li class="flex gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i> Masa aktif 1 Tahun</li>
-                           <li class="flex gap-2"><i data-lucide="star" class="w-3.5 h-3.5 text-yellow-400 shrink-0"></i> Priority Review</li>
-                       </ul>
-                   </div>
-                   <div class="mt-4 flex justify-end z-10 relative">
-                       <div class="w-5 h-5 rounded-full border border-slate-500 flex items-center justify-center check-circle transition-colors"><div class="w-2.5 h-2.5 rounded-full bg-indigo-500 scale-0 transition-transform check-dot"></div></div>
-                   </div>
-               </label>
-           </div>
+            <label
+                class="bundle-radio relative flex flex-col p-5 rounded-xl border border-white/10 cursor-pointer bg-white/5 transition h-full"
+            >
+                <input
+                    type="radio"
+                    name="bundle_choice"
+                    value="Ultimate|Rp 299.000"
+                    class="sr-only"
+                />
+                <div
+                    class="bundle-ring absolute inset-0 rounded-xl border-2 border-transparent transition-colors pointer-events-none"
+                >
+                </div>
+                <div class="flex-1 z-10 relative">
+                    <h4 class="font-bold text-white mb-1">Ultimate</h4>
+                    <div class="text-xl font-bold text-indigo-400 mb-4">
+                        Rp 299k
+                    </div>
+                    <ul class="space-y-2 text-xs text-slate-300">
+                        <li class="flex gap-2">
+                            <i
+                                data-lucide="check"
+                                class="w-3.5 h-3.5 text-emerald-400 shrink-0"
+                            ></i> 20x CV Check
+                        </li>
+                        <li class="flex gap-2">
+                            <i
+                                data-lucide="check"
+                                class="w-3.5 h-3.5 text-emerald-400 shrink-0"
+                            ></i> 20x Simulasi Interview
+                        </li>
+                        <li class="flex gap-2">
+                            <i
+                                data-lucide="check"
+                                class="w-3.5 h-3.5 text-emerald-400 shrink-0"
+                            ></i> Masa aktif 1 Tahun
+                        </li>
+                        <li class="flex gap-2">
+                            <i
+                                data-lucide="star"
+                                class="w-3.5 h-3.5 text-yellow-400 shrink-0"
+                            ></i> Priority Review
+                        </li>
+                    </ul>
+                </div>
+                <div class="mt-4 flex justify-end z-10 relative">
+                    <div
+                        class="w-5 h-5 rounded-full border border-slate-500 flex items-center justify-center check-circle transition-colors"
+                    >
+                        <div
+                            class="w-2.5 h-2.5 rounded-full bg-indigo-500 scale-0 transition-transform check-dot"
+                        >
+                        </div>
+                    </div>
+                </div>
+            </label>
+        </div>
 
-           <button onclick="proceedToPaymentFromBundle()" class="cta-btn w-full py-3 rounded-xl text-sm font-bold flex justify-center items-center gap-2 mt-auto shrink-0">
-               <span>Lanjut Pembayaran</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>
-           </button>
-       </div>
-   </div>
+        <button
+            onclick="proceedToPaymentFromBundle()"
+            class="cta-btn w-full py-3 rounded-xl text-sm font-bold flex justify-center items-center gap-2 mt-auto shrink-0"
+        >
+            <span>Lanjut Pembayaran</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+    </div>
+</div>
 
-   <div id="payment-modal" class="fixed inset-0 z-[120] hidden items-center justify-center bg-slate-950/80 backdrop-blur-sm transition-opacity p-4">
-      <div class="glass w-full max-w-lg p-6 sm:p-8 rounded-2xl relative shadow-2xl animate-fade-up flex flex-col max-h-[90vh]">
-        <button onclick="togglePaymentModal(false)" class="absolute top-4 right-4 text-slate-400 hover:text-white p-2 bg-white/5 hover:bg-white/10 rounded-full transition"><i data-lucide="x" class="w-5 h-5"></i></button>
-        <h3 class="text-xl sm:text-2xl font-bold mb-1">Selesaikan Pembayaran</h3>
-        <p class="text-sm text-slate-400 mb-6">Pilih metode pembayaran untuk langganan Anda.</p>
+<div
+    id="payment-modal"
+    class="fixed inset-0 z-[120] hidden items-center justify-center bg-slate-950/80 backdrop-blur-sm transition-opacity p-4"
+>
+    <div
+        class="glass w-full max-w-lg p-6 sm:p-8 rounded-2xl relative shadow-2xl animate-fade-up flex flex-col max-h-[90vh]"
+    >
+        <button
+            onclick="togglePaymentModal(false)"
+            class="absolute top-4 right-4 text-slate-400 hover:text-white p-2 bg-white/5 hover:bg-white/10 rounded-full transition"
+            ><i data-lucide="x" class="w-5 h-5"></i></button
+        >
+        <h3 class="text-xl sm:text-2xl font-bold mb-1">
+            Selesaikan Pembayaran
+        </h3>
+        <p class="text-sm text-slate-400 mb-6">
+            Pilih metode pembayaran untuk langganan Anda.
+        </p>
 
-        <div class="bg-slate-900/50 rounded-xl p-4 border border-white/10 mb-6 flex justify-between items-center shrink-0">
-           <div>
-              <p class="text-xs text-slate-400">Paket Terpilih</p>
-              <h4 id="pay-plan-name" class="font-bold text-lg text-indigo-300">Premium</h4>
-           </div>
-           <div class="text-right">
-              <p class="text-xs text-slate-400">Total Tagihan</p>
-              <h4 id="pay-plan-price" class="font-bold text-lg">Rp 79.000</h4>
-           </div>
+        <div
+            class="bg-slate-900/50 rounded-xl p-4 border border-white/10 mb-6 flex justify-between items-center shrink-0"
+        >
+            <div>
+                <p class="text-xs text-slate-400">Paket Terpilih</p>
+                <h4
+                    id="pay-plan-name"
+                    class="font-bold text-lg text-indigo-300"
+                >
+                    Premium
+                </h4>
+            </div>
+            <div class="text-right">
+                <p class="text-xs text-slate-400">Total Tagihan</p>
+                <h4 id="pay-plan-price" class="font-bold text-lg">Rp 79.000</h4>
+            </div>
         </div>
 
         <div class="overflow-y-auto chat-scroll pr-2 mb-6 space-y-6 flex-1">
-           <div>
-               <h4 class="text-sm font-semibold text-slate-300 mb-3">Transfer Bank / Virtual Account</h4>
-               <div class="grid grid-cols-2 gap-3">
-                   <label class="payment-radio relative flex items-center justify-between p-3 rounded-xl border border-white/10 hover:border-indigo-500/50 cursor-pointer bg-white/5 transition">
-                       <input type="radio" name="payment_method" value="BCA" class="sr-only" checked>
-                       <div class="absolute inset-0 rounded-xl border-2 border-transparent transition-colors pointer-events-none"></div>
-                       <span class="text-sm font-medium z-10">BCA VA</span>
-                       <i data-lucide="check-circle-2" class="w-5 h-5 text-indigo-400 check-icon opacity-0 transition-transform scale-50 z-10"></i>
-                   </label>
-                   <label class="payment-radio relative flex items-center justify-between p-3 rounded-xl border border-white/10 hover:border-indigo-500/50 cursor-pointer bg-white/5 transition">
-                       <input type="radio" name="payment_method" value="Mandiri" class="sr-only">
-                       <div class="absolute inset-0 rounded-xl border-2 border-transparent transition-colors pointer-events-none"></div>
-                       <span class="text-sm font-medium z-10">Mandiri VA</span>
-                       <i data-lucide="check-circle-2" class="w-5 h-5 text-indigo-400 check-icon opacity-0 transition-transform scale-50 z-10"></i>
-                   </label>
-                   <label class="payment-radio relative flex items-center justify-between p-3 rounded-xl border border-white/10 hover:border-indigo-500/50 cursor-pointer bg-white/5 transition">
-                       <input type="radio" name="payment_method" value="BNI" class="sr-only">
-                       <div class="absolute inset-0 rounded-xl border-2 border-transparent transition-colors pointer-events-none"></div>
-                       <span class="text-sm font-medium z-10">BNI VA</span>
-                       <i data-lucide="check-circle-2" class="w-5 h-5 text-indigo-400 check-icon opacity-0 transition-transform scale-50 z-10"></i>
-                   </label>
-                   <label class="payment-radio relative flex items-center justify-between p-3 rounded-xl border border-white/10 hover:border-indigo-500/50 cursor-pointer bg-white/5 transition">
-                       <input type="radio" name="payment_method" value="BRI" class="sr-only">
-                       <div class="absolute inset-0 rounded-xl border-2 border-transparent transition-colors pointer-events-none"></div>
-                       <span class="text-sm font-medium z-10">BRI VA</span>
-                       <i data-lucide="check-circle-2" class="w-5 h-5 text-indigo-400 check-icon opacity-0 transition-transform scale-50 z-10"></i>
-                   </label>
-               </div>
-           </div>
-           
-           <div>
-               <h4 class="text-sm font-semibold text-slate-300 mb-3">E-Wallet</h4>
-               <div class="grid grid-cols-2 gap-3">
-                   <label class="payment-radio relative flex items-center justify-between p-3 rounded-xl border border-white/10 hover:border-indigo-500/50 cursor-pointer bg-white/5 transition">
-                       <input type="radio" name="payment_method" value="GoPay" class="sr-only">
-                       <div class="absolute inset-0 rounded-xl border-2 border-transparent transition-colors pointer-events-none"></div>
-                       <span class="text-sm font-medium z-10">GoPay</span>
-                       <i data-lucide="check-circle-2" class="w-5 h-5 text-indigo-400 check-icon opacity-0 transition-transform scale-50 z-10"></i>
-                   </label>
-                   <label class="payment-radio relative flex items-center justify-between p-3 rounded-xl border border-white/10 hover:border-indigo-500/50 cursor-pointer bg-white/5 transition">
-                       <input type="radio" name="payment_method" value="OVO" class="sr-only">
-                       <div class="absolute inset-0 rounded-xl border-2 border-transparent transition-colors pointer-events-none"></div>
-                       <span class="text-sm font-medium z-10">OVO</span>
-                       <i data-lucide="check-circle-2" class="w-5 h-5 text-indigo-400 check-icon opacity-0 transition-transform scale-50 z-10"></i>
-                   </label>
-                   <label class="payment-radio relative flex items-center justify-between p-3 rounded-xl border border-white/10 hover:border-indigo-500/50 cursor-pointer bg-white/5 transition">
-                       <input type="radio" name="payment_method" value="DANA" class="sr-only">
-                       <div class="absolute inset-0 rounded-xl border-2 border-transparent transition-colors pointer-events-none"></div>
-                       <span class="text-sm font-medium z-10">DANA</span>
-                       <i data-lucide="check-circle-2" class="w-5 h-5 text-indigo-400 check-icon opacity-0 transition-transform scale-50 z-10"></i>
-                   </label>
-                   <label class="payment-radio relative flex items-center justify-between p-3 rounded-xl border border-white/10 hover:border-indigo-500/50 cursor-pointer bg-white/5 transition">
-                       <input type="radio" name="payment_method" value="ShopeePay" class="sr-only">
-                       <div class="absolute inset-0 rounded-xl border-2 border-transparent transition-colors pointer-events-none"></div>
-                       <span class="text-sm font-medium z-10">ShopeePay</span>
-                       <i data-lucide="check-circle-2" class="w-5 h-5 text-indigo-400 check-icon opacity-0 transition-transform scale-50 z-10"></i>
-                   </label>
-               </div>
-           </div>
+            <div>
+                <h4 class="text-sm font-semibold text-slate-300 mb-3">
+                    Transfer Bank / Virtual Account
+                </h4>
+                <div class="grid grid-cols-2 gap-3">
+                    <label
+                        class="payment-radio relative flex items-center justify-between p-3 rounded-xl border border-white/10 hover:border-indigo-500/50 cursor-pointer bg-white/5 transition"
+                    >
+                        <input
+                            type="radio"
+                            name="payment_method"
+                            value="BCA"
+                            class="sr-only"
+                            checked
+                        />
+                        <div
+                            class="absolute inset-0 rounded-xl border-2 border-transparent transition-colors pointer-events-none"
+                        >
+                        </div>
+                        <span class="text-sm font-medium z-10">BCA VA</span>
+                        <i
+                            data-lucide="check-circle-2"
+                            class="w-5 h-5 text-indigo-400 check-icon opacity-0 transition-transform scale-50 z-10"
+                        ></i>
+                    </label>
+                    <label
+                        class="payment-radio relative flex items-center justify-between p-3 rounded-xl border border-white/10 hover:border-indigo-500/50 cursor-pointer bg-white/5 transition"
+                    >
+                        <input
+                            type="radio"
+                            name="payment_method"
+                            value="Mandiri"
+                            class="sr-only"
+                        />
+                        <div
+                            class="absolute inset-0 rounded-xl border-2 border-transparent transition-colors pointer-events-none"
+                        >
+                        </div>
+                        <span class="text-sm font-medium z-10">Mandiri VA</span>
+                        <i
+                            data-lucide="check-circle-2"
+                            class="w-5 h-5 text-indigo-400 check-icon opacity-0 transition-transform scale-50 z-10"
+                        ></i>
+                    </label>
+                    <label
+                        class="payment-radio relative flex items-center justify-between p-3 rounded-xl border border-white/10 hover:border-indigo-500/50 cursor-pointer bg-white/5 transition"
+                    >
+                        <input
+                            type="radio"
+                            name="payment_method"
+                            value="BNI"
+                            class="sr-only"
+                        />
+                        <div
+                            class="absolute inset-0 rounded-xl border-2 border-transparent transition-colors pointer-events-none"
+                        >
+                        </div>
+                        <span class="text-sm font-medium z-10">BNI VA</span>
+                        <i
+                            data-lucide="check-circle-2"
+                            class="w-5 h-5 text-indigo-400 check-icon opacity-0 transition-transform scale-50 z-10"
+                        ></i>
+                    </label>
+                    <label
+                        class="payment-radio relative flex items-center justify-between p-3 rounded-xl border border-white/10 hover:border-indigo-500/50 cursor-pointer bg-white/5 transition"
+                    >
+                        <input
+                            type="radio"
+                            name="payment_method"
+                            value="BRI"
+                            class="sr-only"
+                        />
+                        <div
+                            class="absolute inset-0 rounded-xl border-2 border-transparent transition-colors pointer-events-none"
+                        >
+                        </div>
+                        <span class="text-sm font-medium z-10">BRI VA</span>
+                        <i
+                            data-lucide="check-circle-2"
+                            class="w-5 h-5 text-indigo-400 check-icon opacity-0 transition-transform scale-50 z-10"
+                        ></i>
+                    </label>
+                </div>
+            </div>
 
-           <div>
-               <h4 class="text-sm font-semibold text-slate-300 mb-3">Kartu Kredit / Debit</h4>
-               <label class="payment-radio relative flex items-center justify-between p-4 rounded-xl border border-white/10 hover:border-indigo-500/50 cursor-pointer bg-white/5 transition">
-                   <input type="radio" name="payment_method" value="Card" class="sr-only">
-                   <div class="absolute inset-0 rounded-xl border-2 border-transparent transition-colors pointer-events-none"></div>
-                   <div class="flex items-center gap-3 z-10">
-                       <i data-lucide="credit-card" class="w-5 h-5 text-slate-400"></i>
-                       <span class="text-sm font-medium">Kartu Visa / Mastercard</span>
-                   </div>
-                   <i data-lucide="check-circle-2" class="w-5 h-5 text-indigo-400 check-icon opacity-0 transition-transform scale-50 z-10"></i>
-               </label>
-           </div>
+            <div>
+                <h4 class="text-sm font-semibold text-slate-300 mb-3">
+                    E-Wallet
+                </h4>
+                <div class="grid grid-cols-2 gap-3">
+                    <label
+                        class="payment-radio relative flex items-center justify-between p-3 rounded-xl border border-white/10 hover:border-indigo-500/50 cursor-pointer bg-white/5 transition"
+                    >
+                        <input
+                            type="radio"
+                            name="payment_method"
+                            value="GoPay"
+                            class="sr-only"
+                        />
+                        <div
+                            class="absolute inset-0 rounded-xl border-2 border-transparent transition-colors pointer-events-none"
+                        >
+                        </div>
+                        <span class="text-sm font-medium z-10">GoPay</span>
+                        <i
+                            data-lucide="check-circle-2"
+                            class="w-5 h-5 text-indigo-400 check-icon opacity-0 transition-transform scale-50 z-10"
+                        ></i>
+                    </label>
+                    <label
+                        class="payment-radio relative flex items-center justify-between p-3 rounded-xl border border-white/10 hover:border-indigo-500/50 cursor-pointer bg-white/5 transition"
+                    >
+                        <input
+                            type="radio"
+                            name="payment_method"
+                            value="OVO"
+                            class="sr-only"
+                        />
+                        <div
+                            class="absolute inset-0 rounded-xl border-2 border-transparent transition-colors pointer-events-none"
+                        >
+                        </div>
+                        <span class="text-sm font-medium z-10">OVO</span>
+                        <i
+                            data-lucide="check-circle-2"
+                            class="w-5 h-5 text-indigo-400 check-icon opacity-0 transition-transform scale-50 z-10"
+                        ></i>
+                    </label>
+                    <label
+                        class="payment-radio relative flex items-center justify-between p-3 rounded-xl border border-white/10 hover:border-indigo-500/50 cursor-pointer bg-white/5 transition"
+                    >
+                        <input
+                            type="radio"
+                            name="payment_method"
+                            value="DANA"
+                            class="sr-only"
+                        />
+                        <div
+                            class="absolute inset-0 rounded-xl border-2 border-transparent transition-colors pointer-events-none"
+                        >
+                        </div>
+                        <span class="text-sm font-medium z-10">DANA</span>
+                        <i
+                            data-lucide="check-circle-2"
+                            class="w-5 h-5 text-indigo-400 check-icon opacity-0 transition-transform scale-50 z-10"
+                        ></i>
+                    </label>
+                    <label
+                        class="payment-radio relative flex items-center justify-between p-3 rounded-xl border border-white/10 hover:border-indigo-500/50 cursor-pointer bg-white/5 transition"
+                    >
+                        <input
+                            type="radio"
+                            name="payment_method"
+                            value="ShopeePay"
+                            class="sr-only"
+                        />
+                        <div
+                            class="absolute inset-0 rounded-xl border-2 border-transparent transition-colors pointer-events-none"
+                        >
+                        </div>
+                        <span class="text-sm font-medium z-10">ShopeePay</span>
+                        <i
+                            data-lucide="check-circle-2"
+                            class="w-5 h-5 text-indigo-400 check-icon opacity-0 transition-transform scale-50 z-10"
+                        ></i>
+                    </label>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="text-sm font-semibold text-slate-300 mb-3">
+                    Kartu Kredit / Debit
+                </h4>
+                <label
+                    class="payment-radio relative flex items-center justify-between p-4 rounded-xl border border-white/10 hover:border-indigo-500/50 cursor-pointer bg-white/5 transition"
+                >
+                    <input
+                        type="radio"
+                        name="payment_method"
+                        value="Card"
+                        class="sr-only"
+                    />
+                    <div
+                        class="absolute inset-0 rounded-xl border-2 border-transparent transition-colors pointer-events-none"
+                    >
+                    </div>
+                    <div class="flex items-center gap-3 z-10">
+                        <i
+                            data-lucide="credit-card"
+                            class="w-5 h-5 text-slate-400"></i>
+                        <span class="text-sm font-medium"
+                            >Kartu Visa / Mastercard</span
+                        >
+                    </div>
+                    <i
+                        data-lucide="check-circle-2"
+                        class="w-5 h-5 text-indigo-400 check-icon opacity-0 transition-transform scale-50 z-10"
+                    ></i>
+                </label>
+            </div>
         </div>
 
         <div class="pt-4 border-t border-white/10 shrink-0">
-           <div class="flex items-center gap-2 justify-center text-xs text-emerald-400 mb-4">
-               <i data-lucide="lock" class="w-4 h-4"></i> Semua transaksi aman dan terenkripsi.
-           </div>
-           <button id="btn-process-payment" onclick="processPayment(event)" class="cta-btn w-full py-3 rounded-xl text-sm font-bold flex justify-center items-center gap-2">
-               <span>Bayar Sekarang</span>
-           </button>
+            <div
+                class="flex items-center gap-2 justify-center text-xs text-emerald-400 mb-4"
+            >
+                <i data-lucide="lock" class="w-4 h-4"></i> Semua transaksi aman dan
+                terenkripsi.
+            </div>
+            <button
+                id="btn-process-payment"
+                onclick="processPayment(event)"
+                class="cta-btn w-full py-3 rounded-xl text-sm font-bold flex justify-center items-center gap-2"
+            >
+                <span>Bayar Sekarang</span>
+            </button>
         </div>
-      </div>
     </div>
+</div>
 
-   <div id="auth-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-950/80 backdrop-blur-sm transition-opacity p-4">
-    <div class="glass w-full max-w-md p-6 sm:p-8 rounded-2xl relative shadow-2xl animate-fade-up">
-        <button onclick="toggleAuthModal(false)" class="absolute top-4 right-4 text-slate-400 hover:text-white p-2"><i data-lucide="x" class="w-5 h-5"></i></button>
-        
+<div
+    id="auth-modal"
+    class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-950/80 backdrop-blur-sm transition-opacity p-4"
+>
+    <div
+        class="glass w-full max-w-md p-6 sm:p-8 rounded-2xl relative shadow-2xl animate-fade-up"
+    >
+        <button
+            onclick="toggleAuthModal(false)"
+            class="absolute top-4 right-4 text-slate-400 hover:text-white p-2"
+            ><i data-lucide="x" class="w-5 h-5"></i></button
+        >
+
         <div class="mb-6">
-            <h3 id="auth-title" class="text-xl sm:text-2xl font-bold mb-2">Masuk ke Akun</h3>
-            <p id="auth-subtitle" class="text-xs sm:text-sm text-slate-400">Mulai latihan interview dan cek ATS CV kamu.</p>
+            <h3 id="auth-title" class="text-xl sm:text-2xl font-bold mb-2">
+                Masuk ke Akun
+            </h3>
+            <p id="auth-subtitle" class="text-xs sm:text-sm text-slate-400">
+                Mulai latihan interview dan cek ATS CV kamu.
+            </p>
         </div>
-        
+
         <form id="form-login" onsubmit="handleLogin(event)" class="space-y-4">
             <div>
-                <label class="block text-sm font-medium text-slate-300 mb-1.5">Email</label>
-                <input type="email" id="login-email" placeholder="email@contoh.com" required class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm sm:text-base focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
+                <label class="block text-sm font-medium text-slate-300 mb-1.5"
+                    >Email</label
+                >
+                <input
+                    type="email"
+                    id="login-email"
+                    placeholder="email@contoh.com"
+                    required
+                    class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm sm:text-base focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
+                />
             </div>
             <div>
-                <label class="block text-sm font-medium text-slate-300 mb-1.5">Password</label>
+                <label class="block text-sm font-medium text-slate-300 mb-1.5"
+                    >Password</label
+                >
                 <div class="relative">
-                    <input type="password" id="login-password" placeholder="••••••••" required class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm sm:text-base focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition pr-12">
-                    <button type="button" onclick="togglePassword('login-password', this)" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-white transition">
-                        <span class="icon-show"><i data-lucide="eye" class="w-5 h-5"></i></span>
-                        <span class="icon-hide hidden"><i data-lucide="eye-off" class="w-5 h-5"></i></span>
+                    <input
+                        type="password"
+                        id="login-password"
+                        placeholder="••••••••"
+                        required
+                        class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm sm:text-base focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition pr-12"
+                    />
+                    <button
+                        type="button"
+                        onclick="togglePassword('login-password', this)"
+                        class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-white transition"
+                    >
+                        <span class="icon-show"
+                            ><i data-lucide="eye" class="w-5 h-5"></i></span
+                        >
+                        <span class="icon-hide hidden"
+                            ><i data-lucide="eye-off" class="w-5 h-5"></i></span
+                        >
                     </button>
                 </div>
             </div>
-            <button type="submit" class="cta-btn w-full py-3 rounded-xl text-sm font-bold mt-4"><span>Masuk Sekarang</span></button>
-            <p class="text-center text-xs sm:text-sm text-slate-400 mt-4">Belum punya akun? <a href="#" onclick="switchAuthMode('register')" class="text-indigo-400 hover:text-indigo-300 font-semibold">Daftar di sini</a></p>
+            <button
+                type="submit"
+                class="cta-btn w-full py-3 rounded-xl text-sm font-bold mt-4"
+                ><span>Masuk Sekarang</span></button
+            >
+            <p class="text-center text-xs sm:text-sm text-slate-400 mt-4">
+                Belum punya akun? <a
+                    href="#"
+                    onclick="switchAuthMode('register')"
+                    class="text-indigo-400 hover:text-indigo-300 font-semibold"
+                    >Daftar di sini</a>
+            </p>
         </form>
 
-        <form id="form-register" onsubmit="handleRegister(event)" class="space-y-4 hidden">
+        <form
+            id="form-register"
+            onsubmit="handleRegister(event)"
+            class="space-y-4 hidden"
+        >
             <div>
-                <label class="block text-sm font-medium text-slate-300 mb-1.5">Nama Lengkap</label>
-                <input type="text" id="reg-name" placeholder="Budi Santoso" required class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm sm:text-base focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
+                <label class="block text-sm font-medium text-slate-300 mb-1.5"
+                    >Nama Lengkap</label
+                >
+                <input
+                    type="text"
+                    id="reg-name"
+                    placeholder="Budi Santoso"
+                    required
+                    class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm sm:text-base focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
+                />
             </div>
             <div>
-                <label class="block text-sm font-medium text-slate-300 mb-1.5">Email</label>
-                <input type="email" id="reg-email" placeholder="email@contoh.com" required class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm sm:text-base focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
+                <label class="block text-sm font-medium text-slate-300 mb-1.5"
+                    >Email</label
+                >
+                <input
+                    type="email"
+                    id="reg-email"
+                    placeholder="email@contoh.com"
+                    required
+                    class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm sm:text-base focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
+                />
             </div>
             <div>
-                <label class="block text-sm font-medium text-slate-300 mb-1.5">Password</label>
+                <label class="block text-sm font-medium text-slate-300 mb-1.5"
+                    >Password</label
+                >
                 <div class="relative">
-                    <input type="password" id="reg-password" placeholder="Minimal 6 karakter" minlength="6" required class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm sm:text-base focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition pr-12">
-                    <button type="button" onclick="togglePassword('reg-password', this)" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-white transition">
-                        <span class="icon-show"><i data-lucide="eye" class="w-5 h-5"></i></span>
-                        <span class="icon-hide hidden"><i data-lucide="eye-off" class="w-5 h-5"></i></span>
+                    <input
+                        type="password"
+                        id="reg-password"
+                        placeholder="Minimal 6 karakter"
+                        minlength="6"
+                        required
+                        class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm sm:text-base focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition pr-12"
+                    />
+                    <button
+                        type="button"
+                        onclick="togglePassword('reg-password', this)"
+                        class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-white transition"
+                    >
+                        <span class="icon-show"
+                            ><i data-lucide="eye" class="w-5 h-5"></i></span
+                        >
+                        <span class="icon-hide hidden"
+                            ><i data-lucide="eye-off" class="w-5 h-5"></i></span
+                        >
                     </button>
                 </div>
             </div>
-            <button type="submit" class="cta-btn w-full py-3 rounded-xl text-sm font-bold mt-4"><span>Buat Akun</span></button>
-            <p class="text-center text-xs sm:text-sm text-slate-400 mt-4">Sudah punya akun? <a href="#" onclick="switchAuthMode('login')" class="text-indigo-400 hover:text-indigo-300 font-semibold">Masuk di sini</a></p>
+            <button
+                type="submit"
+                class="cta-btn w-full py-3 rounded-xl text-sm font-bold mt-4"
+                ><span>Buat Akun</span></button
+            >
+            <p class="text-center text-xs sm:text-sm text-slate-400 mt-4">
+                Sudah punya akun? <a
+                    href="#"
+                    onclick="switchAuthMode('login')"
+                    class="text-indigo-400 hover:text-indigo-300 font-semibold"
+                    >Masuk di sini</a>
+            </p>
         </form>
     </div>
-  </div>
+</div>
 
-  <div id="history-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-950/80 backdrop-blur-sm transition-opacity p-4">
-      <div class="glass w-full max-w-3xl max-h-[90vh] flex flex-col rounded-2xl relative shadow-2xl animate-fade-up">
-          <div class="p-6 sm:p-8 border-b border-white/10 flex justify-between items-center shrink-0">
-              <div>
-                  <h3 id="history-modal-title" class="text-xl sm:text-2xl font-bold text-white mb-1">Detail Latihan</h3>
-                  <p id="history-modal-date" class="text-xs sm:text-sm text-slate-400">Tanggal</p>
-              </div>
-              <div class="flex items-center gap-4">
-                  <div class="text-right hidden sm:block">
-                      <div id="history-modal-score" class="text-2xl font-bold text-indigo-400">0</div>
-                      <div class="text-[10px] text-slate-500 uppercase tracking-wider">Skor</div>
-                  </div>
-                  <button onclick="toggleHistoryModal(false)" class="text-slate-400 hover:text-white p-2 bg-white/5 hover:bg-white/10 rounded-full transition"><i data-lucide="x" class="w-5 h-5"></i></button>
-              </div>
-          </div>
-          <div id="history-modal-body" class="p-6 sm:p-8 overflow-y-auto chat-scroll flex-1">
-              </div>
-      </div>
-  </div>
-
-  </div>
+<div
+    id="history-modal"
+    class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-950/80 backdrop-blur-sm transition-opacity p-4"
+>
+    <div
+        class="glass w-full max-w-3xl max-h-[90vh] flex flex-col rounded-2xl relative shadow-2xl animate-fade-up"
+    >
+        <div
+            class="p-6 sm:p-8 border-b border-white/10 flex justify-between items-center shrink-0"
+        >
+            <div>
+                <h3
+                    id="history-modal-title"
+                    class="text-xl sm:text-2xl font-bold text-white mb-1"
+                >
+                    Detail Latihan
+                </h3>
+                <p
+                    id="history-modal-date"
+                    class="text-xs sm:text-sm text-slate-400"
+                >
+                    Tanggal
+                </p>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="text-right hidden sm:block">
+                    <div
+                        id="history-modal-score"
+                        class="text-2xl font-bold text-indigo-400"
+                    >
+                        0
+                    </div>
+                    <div
+                        class="text-[10px] text-slate-500 uppercase tracking-wider"
+                    >
+                        Skor
+                    </div>
+                </div>
+                <button
+                    onclick="toggleHistoryModal(false)"
+                    class="text-slate-400 hover:text-white p-2 bg-white/5 hover:bg-white/10 rounded-full transition"
+                    ><i data-lucide="x" class="w-5 h-5"></i></button
+                >
+            </div>
+        </div>
+        <div
+            id="history-modal-body"
+            class="p-6 sm:p-8 overflow-y-auto chat-scroll flex-1"
+        >
+        </div>
+        <div id="history-modal-footer" class="p-4 sm:p-6 border-t border-white/10 shrink-0 hidden bg-slate-900/50 rounded-b-2xl flex justify-start">
+            <button onclick="resumeInterviewFromHistory()" class="cta-btn py-2.5 px-5 rounded-xl text-sm font-bold flex items-center justify-center gap-2">
+                <i data-lucide="play-circle" class="w-4 h-4"></i> Lanjutkan Sesi Interview
+            </button>
+        </div>
+    </div>
+</div>
