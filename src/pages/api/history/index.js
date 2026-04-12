@@ -55,3 +55,20 @@ export const POST = async ({ request, cookies }) => {
     return new Response(JSON.stringify({ status: 'error', message: error.message }), { status: 500 });
   }
 }
+
+export const DELETE = async ({ cookies }) => {
+  try {
+    const userIdCookie = cookies.get('user_id');
+    if (!userIdCookie) return new Response(JSON.stringify({ status: 'error', message: 'Unauthorized' }), { status: 401 });
+    
+    const { error } = await supabase
+      .from('learning_sessions')
+      .delete()
+      .eq('user_id', userIdCookie.value);
+
+    if (error) throw error;
+    return new Response(JSON.stringify({ status: 'success' }), { status: 200 });
+  } catch (error) {
+    return new Response(JSON.stringify({ status: 'error', message: error.message }), { status: 500 });
+  }
+}

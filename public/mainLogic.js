@@ -50,12 +50,50 @@
     // --- INTEGRASI PHP (REGISTER, LOGIN, UPDATE PROFILE) ---
     let currentUser = null;
 
+    async function fetchUserHistory() {
+        if (!currentUser) return;
+        try {
+            const res = await fetch('/api/history');
+            const data = await res.json();
+            if (data.status === 'success') {
+                const formattedHistory = data.history.map(item => {
+                    let scores = [];
+                    let contentObj = item.content;
+                    if (item.type === 'interview') {
+                        try {
+                            contentObj = JSON.parse(item.content);
+                        } catch(e) { }
+                        scores = [item.score];
+                    }
+                    
+                    return {
+                        sessionId: item.session_id,
+                        type: item.type,
+                        score: item.score,
+                        scores: scores,
+                        date: item.created_at,
+                        detail: item.detail,
+                        content: contentObj,
+                        title: item.title
+                    };
+                });
+                formattedHistory.sort((a,b) => new Date(a.date) - new Date(b.date));
+                currentUser.history = formattedHistory;
+                localStorage.setItem('lk_active_user_data', JSON.stringify(currentUser));
+                updateDashboardStats();
+            }
+        } catch (e) {
+            console.error("Gagal mengambil riwayat dari database:", e);
+        }
+    }
+
     function checkAuthState() {
         // Karena PHP menangani session/database, kita ambil data user aktif dari localStorage 
         // yang diset saat login sukses dari PHP.
         const storedUser = localStorage.getItem('lk_active_user_data');
         if (storedUser) {
             currentUser = JSON.parse(storedUser);
+            fetchUserHistory();
         }
 
         const guestControls = document.getElementById('nav-controls-guest');
@@ -201,6 +239,7 @@
                 toggleAuthModal(false);
                 checkAuthState();
                 showDashboard();
+                fetchUserHistory();
                 e.target.reset();
             } else {
                 alert(result.message);
@@ -350,15 +389,26 @@
         }
     }
 
-    function processPayment(e) {
+    async function processPayment(e) {
         e.preventDefault();
         const btn = document.getElementById('btn-process-payment');
-        const originalText = btn.innerHTML;
+        const planName = document.getElementById('pay-plan-name').innerText.replace('Paket ', '');
+        const amountStr = document.getElementById('pay-plan-price').innerText.replace(/[^0-9]/g, '');
+        const amount = parseInt(amountStr, 10);
         
+        const originalText = btn.innerHTML;
         btn.disabled = true;
         btn.innerHTML = `<div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div> <span>Memproses...</span>`;
         
-        setTimeout(() => {
+        try {
+            const response = await fetch('/api/transactions', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ plan_name: planName, amount: amount, status: 'success' })
+            });
+
+            if (!response.ok) throw new Error('Transaction failed');
+
             btn.innerHTML = `<i data-lucide="check-circle" class="w-5 h-5"></i> <span>Pembayaran Berhasil!</span>`;
             btn.classList.replace('from-indigo-600', 'from-emerald-500');
             btn.classList.replace('to-purple-600', 'to-teal-500');
@@ -370,9 +420,15 @@
                 btn.innerHTML = originalText;
                 btn.className = "cta-btn w-full py-3 rounded-xl text-sm font-bold flex justify-center items-center gap-2 mt-auto shrink-0";
                 showDashboard();
-                alert("Pembayaran berhasil disimulasikan. Akun Anda telah ditingkatkan!");
+                alert("Pembayaran berhasil disimulasikan dan disimpan ke database. Akun Anda telah ditingkatkan!");
             }, 1500);
-        }, 1500);
+
+        } catch (error) {
+            console.error(error);
+            alert("Gagal memproses pembayaran ke database.");
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        }
     }
 
     function togglePassword(inputId, btnEl) {
@@ -542,13 +598,18 @@
         }
     }
 
-    function clearHistory() {
+    async function clearHistory() {
         if(!currentUser || !currentUser.history || currentUser.history.length === 0) return;
         if(confirm("Apakah Anda yakin ingin menghapus seluruh riwayat latihan? Data ini tidak dapat dikembalikan.")) {
-            currentUser.history = [];
-            localStorage.setItem('lk_active_user_data', JSON.stringify(currentUser));
-            updateDashboardStats();
-            alert("Riwayat berhasil dihapus.");
+            try {
+                await fetch('/api/history', { method: 'DELETE' });
+                currentUser.history = [];
+                localStorage.setItem('lk_active_user_data', JSON.stringify(currentUser));
+                updateDashboardStats();
+                alert("Riwayat berhasil dihapus.");
+            } catch(e) {
+                alert("Gagal menghapus riwayat dari database.");
+            }
         }
     }
 
@@ -772,15 +833,25 @@
                 
                 if(score === 0 || isNaN(score)) score = Math.floor(Math.random() * 20) + 60; 
 
-                if(!currentUser.history) currentUser.history = [];
-                currentUser.history.push({
-                    type: 'cv',
-                    score: score,
-                    date: new Date().toISOString(),
-                    detail: document.getElementById('file-name-display').innerText || 'Dokumen CV',
-                    content: aiOutput
-                });
-                localStorage.setItem('lk_active_user_data', JSON.stringify(currentUser));
+                const detailTitle = document.getElementById('file-name-display').innerText || 'Dokumen CV';
+
+                try {
+                    await fetch('/api/history', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            sessionId: Date.now().toString(),
+                            type: 'cv',
+                            score: score,
+                            title: 'Koreksi CV AI',
+                            detail: detailTitle,
+                            content: aiOutput
+                        })
+                    });
+                    await fetchUserHistory();
+                } catch(err) {
+                    console.error("Gagal simpan ke DB", err);
+                }
             }
 
         } catch (error) {
@@ -829,6 +900,24 @@
             }
             interviewMessages.push({ role: 'assistant', content: resData.data.choices[0].message.content });
             renderChat();
+            
+            if (currentUser) {
+                try {
+                    await fetch('/api/history', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            sessionId: currentSessionId.toString(),
+                            type: 'interview',
+                            score: 0,
+                            title: 'Simulasi Interview',
+                            detail: `Posisi: ${role}`,
+                            content: JSON.stringify(interviewMessages)
+                        })
+                    });
+                    await fetchUserHistory();
+                } catch(e) { console.error("Gagal simpan session awal", e); }
+            }
         } catch (error) {
             console.error(error);
             chatBox.innerHTML = `<div class="text-rose-400 text-xs sm:text-sm text-center mt-10">Koneksi gagal. Detail: ${error.message}. Coba muat ulang halaman.</div>`;
@@ -916,24 +1005,42 @@
                 if(score > 0) {
                     if(!currentUser.history) currentUser.history = [];
                     
-                    let existingSession = currentUser.history.find(h => h.sessionId === currentSessionId);
+                    let existingSession = currentUser.history.find(h => h.sessionId.toString() === currentSessionId.toString());
                     
-                    if (existingSession) {
-                        existingSession.scores.push(score);
-                        existingSession.score = Math.round(existingSession.scores.reduce((a,b) => a+b, 0) / existingSession.scores.length);
-                        existingSession.content = JSON.parse(JSON.stringify(interviewMessages));
-                    } else {
-                        currentUser.history.push({
-                            sessionId: currentSessionId,
-                            type: 'interview',
-                            score: score,
-                            scores: [score],
-                            date: new Date().toISOString(),
-                            detail: `Posisi: ${document.getElementById('int-role').value}`,
-                            content: JSON.parse(JSON.stringify(interviewMessages))
-                        });
+                    try {
+                        if (existingSession) {
+                            if (!existingSession.scores) existingSession.scores = [];
+                            existingSession.scores.push(score);
+                            const avgScore = Math.round(existingSession.scores.reduce((a,b) => a+b, 0) / existingSession.scores.length);
+                            
+                            await fetch('/api/history', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    action: 'update_score',
+                                    sessionId: currentSessionId.toString(),
+                                    score: avgScore,
+                                    content: JSON.stringify(interviewMessages)
+                                })
+                            });
+                        } else {
+                            await fetch('/api/history', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    sessionId: currentSessionId.toString(),
+                                    type: 'interview',
+                                    score: score,
+                                    title: 'Simulasi Interview',
+                                    detail: `Posisi: ${document.getElementById('int-role').value}`,
+                                    content: JSON.stringify(interviewMessages)
+                                })
+                            });
+                        }
+                        await fetchUserHistory();
+                    } catch(err) {
+                        console.error("Gagal update session ke DB", err);
                     }
-                    localStorage.setItem('lk_active_user_data', JSON.stringify(currentUser));
                 }
             }
 
