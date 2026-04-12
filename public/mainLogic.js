@@ -119,10 +119,27 @@ function checkAuthState() {
             document.getElementById('reg-section-title').innerHTML = `Halo, <span class="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">${currentUser.name}!</span>`;
             document.getElementById('reg-section-subtitle').innerText = 'Lanjutkan persiapan kariermu. Cek CV atau mulai simulasi interview sekarang.';
             const ctaBtn = document.getElementById('reg-section-btn');
-            ctaBtn.setAttribute('onclick', 'showDashboard()');
-            ctaBtn.innerHTML = '<span class="flex items-center justify-center gap-2"><i data-lucide="layout-dashboard" class="w-5 h-5"></i> Buka Dashboard</span>';
-            lucide.createIcons();
+            if (ctaBtn) {
+                ctaBtn.setAttribute('onclick', 'showDashboard()');
+                ctaBtn.innerHTML = '<span class="flex items-center justify-center gap-2"><i data-lucide="layout-dashboard" class="w-5 h-5"></i> Buka Dashboard</span>';
+            }
         }
+
+        const heroHeadline = document.getElementById('hero-headline');
+        if (heroHeadline) {
+            heroHeadline.innerHTML = `Selamat datang kembali,<br><span class="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">${currentUser.name}</span>`;
+            document.getElementById('hero-subheadline').innerText = "Lanjutkan latihanmu sekarang, lihat progress, dan ambil sesi berikutnya di dashboard.";
+            const btnWrap = document.getElementById('hero-subheadline').nextElementSibling;
+            if (btnWrap) {
+                const primaryBtn = btnWrap.querySelector('button');
+                if (primaryBtn) {
+                    primaryBtn.setAttribute('onclick', 'showDashboard()');
+                    primaryBtn.innerHTML = '<span class="flex items-center justify-center gap-2"><i data-lucide="layout-dashboard" class="w-5 h-5"></i> Buka Dashboard</span>';
+                    primaryBtn.classList.remove('animate-pulse-glow');
+                }
+            }
+        }
+        lucide.createIcons();
     } else {
         if (guestControls) guestControls.classList.remove('hidden');
         if (userControls) { userControls.classList.add('hidden'); userControls.classList.remove('flex'); }
@@ -135,10 +152,27 @@ function checkAuthState() {
             document.getElementById('reg-section-title').innerHTML = 'Siap Raih <span class="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">Karier Impianmu?</span>';
             document.getElementById('reg-section-subtitle').innerText = 'Daftar gratis dalam 30 detik. Tanpa kartu kredit.';
             const ctaBtn = document.getElementById('reg-section-btn');
-            ctaBtn.setAttribute('onclick', "toggleAuthModal(true, 'register')");
-            ctaBtn.innerHTML = '<span class="flex items-center justify-center gap-2"><i data-lucide="rocket" class="w-5 h-5"></i> Buat Akun Sekarang</span>';
-            lucide.createIcons();
+            if (ctaBtn) {
+                ctaBtn.setAttribute('onclick', "toggleAuthModal(true, 'register')");
+                ctaBtn.innerHTML = '<span class="flex items-center justify-center gap-2"><i data-lucide="rocket" class="w-5 h-5"></i> Buat Akun Sekarang</span>';
+            }
         }
+
+        const heroHeadline = document.getElementById('hero-headline');
+        if (heroHeadline) {
+            heroHeadline.innerHTML = `CV Ditolak ATS?<br><span class="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">Grogi Saat Interview?</span>`;
+            document.getElementById('hero-subheadline').innerText = "Latihan interview dengan AI realistis & cek CV lolos ATS — kapan saja, di mana saja. Langkah pertamamu menuju karier impian, mulai sekarang.";
+            const btnWrap = document.getElementById('hero-subheadline').nextElementSibling;
+            if (btnWrap) {
+                const primaryBtn = btnWrap.querySelector('button');
+                if (primaryBtn) {
+                    primaryBtn.setAttribute('onclick', "toggleAuthModal(true, 'register')");
+                    primaryBtn.innerHTML = '<span class="flex items-center justify-center gap-2"><i data-lucide="zap" class="w-5 h-5"></i> Coba Gratis Sekarang</span>';
+                    primaryBtn.classList.add('animate-pulse-glow');
+                }
+            }
+        }
+        lucide.createIcons();
 
         showLandingPage();
     }
@@ -267,27 +301,47 @@ function saveProfileProcess(e) {
 
     const newName = document.getElementById('prof-name').value.trim();
     const newEmail = document.getElementById('prof-email').value.trim();
-    const oldPass = document.getElementById('prof-old-pass').value;
-    const newPass = document.getElementById('prof-new-pass').value;
-
-    if (oldPass || newPass) {
-        alert('Untuk mengubah password melalui Database PHP, silakan hubungi tim LulusKerja. Fitur ini masih tahap pengembangan backend.');
-    }
 
     currentUser.name = newName;
     currentUser.email = newEmail;
     localStorage.setItem('lk_active_user_data', JSON.stringify(currentUser));
 
-    document.getElementById('prof-old-pass').value = '';
-    document.getElementById('prof-new-pass').value = '';
-    document.getElementById('prof-old-pass').type = 'password';
-    document.getElementById('prof-new-pass').type = 'password';
-    document.querySelectorAll('#tab-profile .icon-show').forEach(i => i.classList.remove('hidden'));
-    document.querySelectorAll('#tab-profile .icon-hide').forEach(i => i.classList.add('hidden'));
-
     checkAuthState();
 
     const msg = document.getElementById('prof-save-msg');
+    msg.classList.remove('hidden');
+    setTimeout(() => msg.classList.add('hidden'), 3000);
+}
+
+function changePasswordProcess(e) {
+    if (e) e.preventDefault();
+    const oldPass = document.getElementById('prof-old-pass').value;
+    const newPass = document.getElementById('prof-new-pass').value;
+    const confirmPass = document.getElementById('prof-confirm-pass').value;
+
+    if (!oldPass || !newPass || !confirmPass) {
+        alert('Mohon isi semua text form password.');
+        return;
+    }
+
+    if (newPass !== confirmPass) {
+        alert('Konfirmasi password baru tidak sesuai.');
+        return;
+    }
+
+    if (newPass.length < 6) {
+        alert('Password baru harus minimal 6 karakter.');
+        return;
+    }
+
+    // Simulasi sukses untuk frontend test
+    // Idealnya call fetch() ke backend supabase endpoint /api/auth/update
+    
+    document.getElementById('prof-old-pass').value = '';
+    document.getElementById('prof-new-pass').value = '';
+    document.getElementById('prof-confirm-pass').value = '';
+
+    const msg = document.getElementById('pass-save-msg');
     msg.classList.remove('hidden');
     setTimeout(() => msg.classList.add('hidden'), 3000);
 }
@@ -804,6 +858,8 @@ async function startAIAnalysis() {
     document.getElementById('btn-analyze').disabled = true;
 
     const promptTemplate = `Kamu adalah Senior Talent Acquisition Specialist dan Pakar Algoritma ATS (Applicant Tracking System) dengan pengalaman lebih dari 10 tahun di perusahaan multinasional. Tugasmu adalah melakukan audit komprehensif, kritis, dan berstandar akademik tinggi terhadap CV kandidat.
+
+        ATURAN MUTLAK: Jika teks yang diberikan BUKAN sebuah CV atau tidak memiliki struktur resume (misalnya pertanyaan biasa, lelucon, atau teks tidak relevan), kamu HARUS MENOLAK untuk menjawabnya. Cukup jawab: "Maaf, AI mendeteksi bahwa dokumen ini bukan sebuah CV. Silakan unggah dokumen CV Anda untuk dianalisis." dan jangan berikan output Markdown.
 
         Analisis teks CV berikut ini secara mendalam dan berikan umpan balik yang terstruktur, langsung pada intinya, dan tidak bertele-tele.
 
