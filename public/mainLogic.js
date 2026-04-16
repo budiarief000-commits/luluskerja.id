@@ -1155,25 +1155,25 @@ function initSpeechToText() {
     }
 
     const recognition = new SpeechRecognition();
-    recognition.lang = 'id-ID';
+    recognition.lang = 'id-ID'; // Default ke Bahasa Indonesia
     recognition.continuous = true;
     recognition.interimResults = true;
     recognition.maxAlternatives = 1;
 
-    let finalTranscript = '';
-
     recognition.onstart = () => {
         sttIsListening = true;
-        finalTranscript = '';
         updateSTTUI(true);
     };
 
     recognition.onresult = (event) => {
+        // PERBAIKAN: Selalu bentuk ulang seluruh teks dari awal untuk mencegah duplikasi di HP (Android/Chrome)
+        let fullTranscript = '';
         let interimTranscript = '';
-        for (let i = event.resultIndex; i < event.results.length; i++) {
+        
+        for (let i = 0; i < event.results.length; i++) {
             const transcript = event.results[i][0].transcript;
             if (event.results[i].isFinal) {
-                finalTranscript += transcript + ' ';
+                fullTranscript += transcript + ' ';
             } else {
                 interimTranscript += transcript;
             }
@@ -1181,16 +1181,18 @@ function initSpeechToText() {
 
         const inputEl = document.getElementById('int-user-answer');
         if (inputEl) {
-            // Show combined final + interim text
-            inputEl.value = finalTranscript + interimTranscript;
+            // Gabungkan teks final dan teks sementara
+            inputEl.value = (fullTranscript + interimTranscript).trim();
             // Auto-resize textarea
             inputEl.style.height = 'auto';
             inputEl.style.height = inputEl.scrollHeight + 'px';
+            // Scroll ke bawah otomatis
+            inputEl.scrollTop = inputEl.scrollHeight;
         }
 
         const statusText = document.getElementById('stt-status-text');
         if (statusText) {
-            statusText.textContent = interimTranscript ? 'Mendengar: "' + interimTranscript.slice(0, 40) + '..."' : 'Mendengarkan...';
+            statusText.textContent = interimTranscript ? 'Mendengar: "' + interimTranscript.slice(0, 30) + '..."' : 'Mendengarkan...';
         }
     };
 
@@ -1198,24 +1200,23 @@ function initSpeechToText() {
         console.error('STT Error:', event.error);
         let errorMsg = 'Terjadi kesalahan.';
         if (event.error === 'not-allowed' || event.error === 'permission-denied') {
-            errorMsg = 'Izin mikrofon ditolak. Aktifkan di pengaturan browser.';
+            errorMsg = 'Izin mikrofon ditolak.';
         } else if (event.error === 'no-speech') {
-            errorMsg = 'Tidak ada suara terdeteksi.';
+            errorMsg = 'Tidak ada suara.';
         } else if (event.error === 'network') {
-            errorMsg = 'Koneksi jaringan bermasalah.';
+            errorMsg = 'Masalah jaringan.';
         }
 
         const statusText = document.getElementById('stt-status-text');
         if (statusText) statusText.textContent = errorMsg;
 
-        setTimeout(() => {
-            stopSpeechToText();
-        }, 2000);
+        if (event.error !== 'no-speech') {
+            setTimeout(() => stopSpeechToText(), 2000);
+        }
     };
 
     recognition.onend = () => {
         if (sttIsListening) {
-            // Auto-stopped due to silence, clean up UI
             sttIsListening = false;
             updateSTTUI(false);
         }
@@ -1227,7 +1228,7 @@ function initSpeechToText() {
 function toggleSpeechToText() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
-        alert('Browser Anda tidak mendukung Speech-to-Text. Gunakan Google Chrome atau Microsoft Edge versi terbaru.');
+        alert('Browser Anda tidak mendukung fitur ini. Gunakan Chrome atau Edge.');
         return;
     }
 
@@ -1239,25 +1240,20 @@ function toggleSpeechToText() {
 }
 
 function startSpeechToText() {
-    if (!sttRecognition) {
-        sttRecognition = initSpeechToText();
-    }
+    // Re-init recognition for every start to ensure fresh state/language
+    sttRecognition = initSpeechToText();
     if (!sttRecognition) return;
 
     try {
         sttRecognition.start();
     } catch (e) {
-        // Already started, restart
-        sttRecognition.stop();
-        setTimeout(() => {
-            try { sttRecognition.start(); } catch (err) { console.error(err); }
-        }, 200);
+        console.error("Gagal memulai STT:", e);
     }
 }
 
 function stopSpeechToText() {
     if (sttRecognition) {
-        try { sttRecognition.stop(); } catch (e) { /* ignore */ }
+        try { sttRecognition.stop(); } catch (e) { }
     }
     sttIsListening = false;
     updateSTTUI(false);
@@ -1267,7 +1263,6 @@ function updateSTTUI(isRecording) {
     const btn = document.getElementById('btn-stt');
     const pulse = btn ? btn.querySelector('.stt-pulse') : null;
     const status = document.getElementById('stt-status');
-    const statusText = document.getElementById('stt-status-text');
 
     if (!btn) return;
 
@@ -1276,7 +1271,6 @@ function updateSTTUI(isRecording) {
         btn.classList.add('bg-rose-500/20', 'hover:bg-rose-500/30', 'border-rose-500/40', 'text-rose-400', 'stt-active');
         if (pulse) pulse.classList.remove('hidden');
         if (status) status.classList.remove('hidden');
-        if (statusText) statusText.textContent = 'Mendengarkan...';
     } else {
         btn.classList.add('bg-white/5', 'hover:bg-white/10', 'border-white/10', 'text-slate-300');
         btn.classList.remove('bg-rose-500/20', 'hover:bg-rose-500/30', 'border-rose-500/40', 'text-rose-400', 'stt-active');

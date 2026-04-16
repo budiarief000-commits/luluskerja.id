@@ -163,3 +163,7 @@ body { box-sizing: border-box; overflow-x: hidden; }
 .stt-active {
     animation: stt-glow 1.5s ease-in-out infinite;
 }
+
+#stt-lang-id, #stt-lang-en {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
