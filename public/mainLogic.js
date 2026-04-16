@@ -1044,6 +1044,7 @@ function renderChat() {
 }
 
 async function sendInterviewAnswer() {
+    stopSpeechToText();
     const inputEl = document.getElementById('int-user-answer');
     const answer = inputEl.value.trim();
     const btnSend = document.getElementById('btn-send-answer');
@@ -1140,6 +1141,160 @@ async function sendInterviewAnswer() {
         btnSend.innerHTML = `<i data-lucide="send" class="w-4 h-4 sm:w-5 sm:h-5"></i>`;
         lucide.createIcons();
     }
+}
+
+// --- SPEECH-TO-TEXT (STT) ENGINE ---
+let sttRecognition = null;
+let sttIsListening = false;
+
+function initSpeechToText() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+        console.warn('Speech Recognition API tidak didukung di browser ini.');
+        return null;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'id-ID';
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.maxAlternatives = 1;
+
+    let finalTranscript = '';
+
+    recognition.onstart = () => {
+        sttIsListening = true;
+        finalTranscript = '';
+        updateSTTUI(true);
+    };
+
+    recognition.onresult = (event) => {
+        let interimTranscript = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+            const transcript = event.results[i][0].transcript;
+            if (event.results[i].isFinal) {
+                finalTranscript += transcript + ' ';
+            } else {
+                interimTranscript += transcript;
+            }
+        }
+
+        const inputEl = document.getElementById('int-user-answer');
+        if (inputEl) {
+            // Show combined final + interim text
+            inputEl.value = finalTranscript + interimTranscript;
+            // Auto-resize textarea
+            inputEl.style.height = 'auto';
+            inputEl.style.height = inputEl.scrollHeight + 'px';
+        }
+
+        const statusText = document.getElementById('stt-status-text');
+        if (statusText) {
+            statusText.textContent = interimTranscript ? 'Mendengar: "' + interimTranscript.slice(0, 40) + '..."' : 'Mendengarkan...';
+        }
+    };
+
+    recognition.onerror = (event) => {
+        console.error('STT Error:', event.error);
+        let errorMsg = 'Terjadi kesalahan.';
+        if (event.error === 'not-allowed' || event.error === 'permission-denied') {
+            errorMsg = 'Izin mikrofon ditolak. Aktifkan di pengaturan browser.';
+        } else if (event.error === 'no-speech') {
+            errorMsg = 'Tidak ada suara terdeteksi.';
+        } else if (event.error === 'network') {
+            errorMsg = 'Koneksi jaringan bermasalah.';
+        }
+
+        const statusText = document.getElementById('stt-status-text');
+        if (statusText) statusText.textContent = errorMsg;
+
+        setTimeout(() => {
+            stopSpeechToText();
+        }, 2000);
+    };
+
+    recognition.onend = () => {
+        if (sttIsListening) {
+            // Auto-stopped due to silence, clean up UI
+            sttIsListening = false;
+            updateSTTUI(false);
+        }
+    };
+
+    return recognition;
+}
+
+function toggleSpeechToText() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+        alert('Browser Anda tidak mendukung Speech-to-Text. Gunakan Google Chrome atau Microsoft Edge versi terbaru.');
+        return;
+    }
+
+    if (sttIsListening) {
+        stopSpeechToText();
+    } else {
+        startSpeechToText();
+    }
+}
+
+function startSpeechToText() {
+    if (!sttRecognition) {
+        sttRecognition = initSpeechToText();
+    }
+    if (!sttRecognition) return;
+
+    try {
+        sttRecognition.start();
+    } catch (e) {
+        // Already started, restart
+        sttRecognition.stop();
+        setTimeout(() => {
+            try { sttRecognition.start(); } catch (err) { console.error(err); }
+        }, 200);
+    }
+}
+
+function stopSpeechToText() {
+    if (sttRecognition) {
+        try { sttRecognition.stop(); } catch (e) { /* ignore */ }
+    }
+    sttIsListening = false;
+    updateSTTUI(false);
+}
+
+function updateSTTUI(isRecording) {
+    const btn = document.getElementById('btn-stt');
+    const pulse = btn ? btn.querySelector('.stt-pulse') : null;
+    const status = document.getElementById('stt-status');
+    const statusText = document.getElementById('stt-status-text');
+
+    if (!btn) return;
+
+    if (isRecording) {
+        btn.classList.remove('bg-white/5', 'hover:bg-white/10', 'border-white/10', 'text-slate-300');
+        btn.classList.add('bg-rose-500/20', 'hover:bg-rose-500/30', 'border-rose-500/40', 'text-rose-400', 'stt-active');
+        if (pulse) pulse.classList.remove('hidden');
+        if (status) status.classList.remove('hidden');
+        if (statusText) statusText.textContent = 'Mendengarkan...';
+    } else {
+        btn.classList.add('bg-white/5', 'hover:bg-white/10', 'border-white/10', 'text-slate-300');
+        btn.classList.remove('bg-rose-500/20', 'hover:bg-rose-500/30', 'border-rose-500/40', 'text-rose-400', 'stt-active');
+        if (pulse) pulse.classList.add('hidden');
+        if (status) status.classList.add('hidden');
+    }
+
+    lucide.createIcons();
+}
+
+// Reset interview and stop STT
+function resetInterview() {
+    stopSpeechToText();
+    document.getElementById('interview-setup').classList.remove('hidden');
+    document.getElementById('interview-chat-container').classList.add('hidden');
+    document.getElementById('interview-chat-container').classList.remove('flex');
+    interviewMessages = [];
+    currentSessionId = null;
 }
 
 checkAuthState();

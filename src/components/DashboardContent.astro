@@ -133,10 +133,20 @@
                       </div>
 
                       <div class="flex gap-2 sm:gap-3 relative shrink-0">
-                          <textarea id="int-user-answer" rows="1" placeholder="Ketik jawabanmu..." class="flex-1 px-3 py-2 sm:px-4 sm:py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-purple-500 resize-none text-base sm:text-sm overflow-hidden" style="min-height: 44px;"></textarea>
+                          <textarea id="int-user-answer" rows="1" placeholder="Ketik atau tekan 🎤 untuk bicara..." class="flex-1 px-3 py-2 sm:px-4 sm:py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-purple-500 resize-none text-base sm:text-sm overflow-hidden" style="min-height: 44px;"></textarea>
+                          <button onclick="toggleSpeechToText()" id="btn-stt" title="Speech-to-Text" class="relative bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white px-3 sm:px-4 rounded-xl transition flex items-center justify-center shrink-0 group">
+                              <i data-lucide="mic" class="w-4 h-4 sm:w-5 sm:h-5 stt-icon-idle"></i>
+                              <div class="stt-pulse hidden absolute inset-0 rounded-xl"></div>
+                          </button>
                           <button onclick="sendInterviewAnswer()" id="btn-send-answer" class="bg-purple-600 hover:bg-purple-500 text-white px-4 sm:px-5 rounded-xl transition flex items-center justify-center shrink-0">
                               <i data-lucide="send" class="w-4 h-4 sm:w-5 sm:h-5"></i>
                           </button>
+                      </div>
+                      <div id="stt-status" class="hidden text-xs text-center mt-2 animate-fade-up">
+                          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-400">
+                              <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+                              <span id="stt-status-text">Mendengarkan...</span>
+                          </span>
                       </div>
                   </div>
               </div>
