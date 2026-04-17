@@ -1146,6 +1146,12 @@ async function sendInterviewAnswer() {
 // --- SPEECH-TO-TEXT (STT) ENGINE ---
 let sttRecognition = null;
 let sttIsListening = false;
+// Akumulator: teks yang sudah di-commit (final) dari STT
+let sttCommittedText = '';
+// Teks yang sudah ada di textarea SEBELUM STT dimulai
+let sttPreExistingText = '';
+// Index result terakhir yang sudah di-commit, untuk mencegah duplikasi
+let sttResultIndex = 0;
 
 function initSpeechToText() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -1155,7 +1161,7 @@ function initSpeechToText() {
     }
 
     const recognition = new SpeechRecognition();
-    recognition.lang = 'id-ID'; // Default ke Bahasa Indonesia
+    recognition.lang = 'id-ID';
     recognition.continuous = true;
     recognition.interimResults = true;
     recognition.maxAlternatives = 1;
@@ -1166,33 +1172,44 @@ function initSpeechToText() {
     };
 
     recognition.onresult = (event) => {
-        // PERBAIKAN: Selalu bentuk ulang seluruh teks dari awal untuk mencegah duplikasi di HP (Android/Chrome)
-        let fullTranscript = '';
-        let interimTranscript = '';
-        
-        for (let i = 0; i < event.results.length; i++) {
-            const transcript = event.results[i][0].transcript;
-            if (event.results[i].isFinal) {
-                fullTranscript += transcript + ' ';
+        // Hanya proses result BARU yang belum di-commit
+        // Ini mencegah duplikasi pada Android/Chrome mobile
+        let newFinalText = '';
+        let currentInterim = '';
+
+        for (let i = sttResultIndex; i < event.results.length; i++) {
+            const result = event.results[i];
+            if (result.isFinal) {
+                // Commit teks final ini dan geser index
+                newFinalText += result[0].transcript + ' ';
+                sttResultIndex = i + 1;
             } else {
-                interimTranscript += transcript;
+                // Interim hanya dari result yang belum final
+                currentInterim = result[0].transcript;
             }
+        }
+
+        // Tambahkan teks final baru ke akumulator
+        if (newFinalText) {
+            sttCommittedText += newFinalText;
         }
 
         const inputEl = document.getElementById('int-user-answer');
         if (inputEl) {
-            // Gabungkan teks final dan teks sementara
-            inputEl.value = (fullTranscript + interimTranscript).trim();
+            // Gabungan: teks sebelum STT + teks final terakumulasi + teks interim saat ini
+            const prefix = sttPreExistingText ? sttPreExistingText + ' ' : '';
+            inputEl.value = (prefix + sttCommittedText + currentInterim).trim();
             // Auto-resize textarea
             inputEl.style.height = 'auto';
             inputEl.style.height = inputEl.scrollHeight + 'px';
-            // Scroll ke bawah otomatis
             inputEl.scrollTop = inputEl.scrollHeight;
         }
 
         const statusText = document.getElementById('stt-status-text');
         if (statusText) {
-            statusText.textContent = interimTranscript ? 'Mendengar: "' + interimTranscript.slice(0, 30) + '..."' : 'Mendengarkan...';
+            statusText.textContent = currentInterim
+                ? 'Mendengar: "' + currentInterim.slice(0, 30) + '..."'
+                : 'Mendengarkan...';
         }
     };
 
@@ -1240,7 +1257,15 @@ function toggleSpeechToText() {
 }
 
 function startSpeechToText() {
-    // Re-init recognition for every start to ensure fresh state/language
+    // Reset akumulator STT setiap mulai sesi baru
+    sttCommittedText = '';
+    sttResultIndex = 0;
+
+    // Simpan teks yang sudah ada di textarea sebelum STT dimulai
+    const inputEl = document.getElementById('int-user-answer');
+    sttPreExistingText = inputEl ? inputEl.value.trim() : '';
+
+    // Re-init recognition for every start to ensure fresh state
     sttRecognition = initSpeechToText();
     if (!sttRecognition) return;
 
@@ -1256,6 +1281,10 @@ function stopSpeechToText() {
         try { sttRecognition.stop(); } catch (e) { }
     }
     sttIsListening = false;
+    // Reset state STT
+    sttCommittedText = '';
+    sttResultIndex = 0;
+    sttPreExistingText = '';
     updateSTTUI(false);
 }
 
