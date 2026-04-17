@@ -1144,61 +1144,48 @@ async function sendInterviewAnswer() {
 }
 
 // --- SPEECH-TO-TEXT (STT) ENGINE ---
+// Menggunakan mode NON-CONTINUOUS + auto-restart untuk mencegah
+// duplikasi teks yang terjadi di Chrome Android dengan continuous=true.
 let sttRecognition = null;
-let sttIsListening = false;
-// Akumulator: teks yang sudah di-commit (final) dari STT
-let sttCommittedText = '';
-// Teks yang sudah ada di textarea SEBELUM STT dimulai
-let sttPreExistingText = '';
-// Index result terakhir yang sudah di-commit, untuk mencegah duplikasi
-let sttResultIndex = 0;
+let sttIsListening = false;    // flag: apakah user menginginkan STT aktif
+let sttCommittedText = '';     // akumulator teks final dari semua sesi
+let sttPreExistingText = '';   // teks yang sudah ada sebelum STT dimulai
+let sttShouldRestart = false;  // flag: apakah perlu auto-restart setelah onend
 
-function initSpeechToText() {
+function _createRecognition() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-        console.warn('Speech Recognition API tidak didukung di browser ini.');
-        return null;
-    }
+    if (!SpeechRecognition) return null;
 
     const recognition = new SpeechRecognition();
     recognition.lang = 'id-ID';
-    recognition.continuous = true;
+    // KUNCI: continuous=false agar setiap sesi hanya menangkap 1 utterance
+    // Ini mencegah bug duplikasi di Android Chrome
+    recognition.continuous = false;
     recognition.interimResults = true;
     recognition.maxAlternatives = 1;
 
     recognition.onstart = () => {
-        sttIsListening = true;
         updateSTTUI(true);
     };
 
     recognition.onresult = (event) => {
-        // Hanya proses result BARU yang belum di-commit
-        // Ini mencegah duplikasi pada Android/Chrome mobile
-        let newFinalText = '';
-        let currentInterim = '';
-
-        for (let i = sttResultIndex; i < event.results.length; i++) {
-            const result = event.results[i];
-            if (result.isFinal) {
-                // Commit teks final ini dan geser index
-                newFinalText += result[0].transcript + ' ';
-                sttResultIndex = i + 1;
-            } else {
-                // Interim hanya dari result yang belum final
-                currentInterim = result[0].transcript;
-            }
-        }
-
-        // Tambahkan teks final baru ke akumulator
-        if (newFinalText) {
-            sttCommittedText += newFinalText;
-        }
+        // Karena continuous=false, event.results hanya berisi 1 result set
+        // Ambil result terakhir saja
+        const lastResult = event.results[event.results.length - 1];
+        const transcript = lastResult[0].transcript;
 
         const inputEl = document.getElementById('int-user-answer');
         if (inputEl) {
-            // Gabungan: teks sebelum STT + teks final terakumulasi + teks interim saat ini
-            const prefix = sttPreExistingText ? sttPreExistingText + ' ' : '';
-            inputEl.value = (prefix + sttCommittedText + currentInterim).trim();
+            if (lastResult.isFinal) {
+                // Teks sudah final → commit ke akumulator
+                sttCommittedText += transcript + ' ';
+                const prefix = sttPreExistingText ? sttPreExistingText + ' ' : '';
+                inputEl.value = (prefix + sttCommittedText).trim();
+            } else {
+                // Teks interim → tampilkan sementara (tidak di-commit)
+                const prefix = sttPreExistingText ? sttPreExistingText + ' ' : '';
+                inputEl.value = (prefix + sttCommittedText + transcript).trim();
+            }
             // Auto-resize textarea
             inputEl.style.height = 'auto';
             inputEl.style.height = inputEl.scrollHeight + 'px';
@@ -1207,33 +1194,56 @@ function initSpeechToText() {
 
         const statusText = document.getElementById('stt-status-text');
         if (statusText) {
-            statusText.textContent = currentInterim
-                ? 'Mendengar: "' + currentInterim.slice(0, 30) + '..."'
-                : 'Mendengarkan...';
+            statusText.textContent = lastResult.isFinal
+                ? 'Mendengarkan...'
+                : 'Mendengar: "' + transcript.slice(0, 30) + '..."';
         }
     };
 
     recognition.onerror = (event) => {
         console.error('STT Error:', event.error);
-        let errorMsg = 'Terjadi kesalahan.';
+
         if (event.error === 'not-allowed' || event.error === 'permission-denied') {
-            errorMsg = 'Izin mikrofon ditolak.';
-        } else if (event.error === 'no-speech') {
-            errorMsg = 'Tidak ada suara.';
+            const statusText = document.getElementById('stt-status-text');
+            if (statusText) statusText.textContent = 'Izin mikrofon ditolak.';
+            sttShouldRestart = false;
+            sttIsListening = false;
+            updateSTTUI(false);
         } else if (event.error === 'network') {
-            errorMsg = 'Masalah jaringan.';
-        }
-
-        const statusText = document.getElementById('stt-status-text');
-        if (statusText) statusText.textContent = errorMsg;
-
-        if (event.error !== 'no-speech') {
-            setTimeout(() => stopSpeechToText(), 2000);
+            const statusText = document.getElementById('stt-status-text');
+            if (statusText) statusText.textContent = 'Masalah jaringan.';
+            sttShouldRestart = false;
+            sttIsListening = false;
+            updateSTTUI(false);
+        } else if (event.error === 'no-speech') {
+            // no-speech: tidak ada suara terdeteksi, biarkan auto-restart via onend
+            const statusText = document.getElementById('stt-status-text');
+            if (statusText) statusText.textContent = 'Tidak ada suara terdeteksi...';
+        } else if (event.error === 'aborted') {
+            // User atau sistem membatalkan, jangan restart
+            sttShouldRestart = false;
         }
     };
 
     recognition.onend = () => {
-        if (sttIsListening) {
+        // Karena continuous=false, onend dipanggil setelah setiap utterance.
+        // Jika user masih ingin mendengarkan, restart otomatis.
+        if (sttShouldRestart && sttIsListening) {
+            setTimeout(() => {
+                if (sttShouldRestart && sttIsListening) {
+                    try {
+                        // Buat instance baru untuk setiap restart (lebih stabil di mobile)
+                        sttRecognition = _createRecognition();
+                        if (sttRecognition) sttRecognition.start();
+                    } catch (e) {
+                        console.error('Gagal restart STT:', e);
+                        sttIsListening = false;
+                        sttShouldRestart = false;
+                        updateSTTUI(false);
+                    }
+                }
+            }, 100);
+        } else {
             sttIsListening = false;
             updateSTTUI(false);
         }
@@ -1257,33 +1267,40 @@ function toggleSpeechToText() {
 }
 
 function startSpeechToText() {
-    // Reset akumulator STT setiap mulai sesi baru
+    // Reset akumulator
     sttCommittedText = '';
-    sttResultIndex = 0;
+    sttShouldRestart = true;
+    sttIsListening = true;
 
-    // Simpan teks yang sudah ada di textarea sebelum STT dimulai
+    // Simpan teks yang sudah ada di textarea
     const inputEl = document.getElementById('int-user-answer');
     sttPreExistingText = inputEl ? inputEl.value.trim() : '';
 
-    // Re-init recognition for every start to ensure fresh state
-    sttRecognition = initSpeechToText();
+    // Buat instance baru recognition
+    sttRecognition = _createRecognition();
     if (!sttRecognition) return;
 
     try {
         sttRecognition.start();
     } catch (e) {
         console.error("Gagal memulai STT:", e);
+        sttIsListening = false;
+        sttShouldRestart = false;
     }
 }
 
 function stopSpeechToText() {
+    // Hentikan auto-restart loop
+    sttShouldRestart = false;
+    sttIsListening = false;
+
     if (sttRecognition) {
         try { sttRecognition.stop(); } catch (e) { }
+        sttRecognition = null;
     }
-    sttIsListening = false;
-    // Reset state STT
+
+    // Reset state
     sttCommittedText = '';
-    sttResultIndex = 0;
     sttPreExistingText = '';
     updateSTTUI(false);
 }
